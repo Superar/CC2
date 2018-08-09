@@ -1,4 +1,8 @@
-grammar gramaticaLA;
+grammar LA;
+
+@header {
+    package br.ufscar.dc.antlr;
+}
 
 /*-------------------- Regras sintáticas --------------------*/
 

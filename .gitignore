@@ -32,3 +32,6 @@ CorretorTrabalho1/
 
 # Arquivos gerados pelo Maven
 **/target/
+
+# Arquivos PDF
+*.pdf

@@ -27,6 +27,7 @@ casosDeTesteT1/
 CorretorTrabalho1/
 
 # Arquivos gerados pelo ANTLR
+**/src/main/antlr4/.antlr/
 **/src/main/antlr4/*.java
 **/src/main/antlr4/*.tokens
 

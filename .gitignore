@@ -25,3 +25,10 @@ hs_err_pid*
 # Arquivos de teste
 casosDeTesteT1/
 CorretorTrabalho1/
+
+# Arquivos gerados pelo ANTLR
+**/src/main/antlr4/*.java
+**/src/main/antlr4/*.tokens
+
+# Arquivos gerados pelo Maven
+**/target/

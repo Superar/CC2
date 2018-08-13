@@ -36,3 +36,6 @@ CorretorTrabalho1/
 
 # Arquivos PDF
 *.pdf
+
+# Arquivos do NetBeans
+nbactions.xml

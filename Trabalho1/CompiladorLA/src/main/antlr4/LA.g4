@@ -11,7 +11,7 @@ declaracoes: (decl_local_global)*;
 decl_local_global: declaracao_local | declaracao_global;
 declaracao_local:
 	'declare' variavel
-	| 'constatnte' IDENT ':' tipo_basico '=' valor_constante
+	| 'constante' IDENT ':' tipo_basico '=' valor_constante
 	| 'tipo' IDENT ':' tipo;
 variavel: identificador (',' identificador)* ':' tipo;
 identificador: IDENT ('.' IDENT)* dimensao;
@@ -64,8 +64,8 @@ cmdAtribuicao: ('^')? identificador '<-' expressao;
 cmdChamada: IDENT '(' expressao (',' expressao)* ')';
 cmdRetorne: 'retorne' expressao;
 selecao: (item_selecao)*;
-item_selecao: constatntes ':' (cmd)*;
-constatntes: numero_intervalo (',' numero_intervalo)*;
+item_selecao: constantes ':' (cmd)*;
+constantes: numero_intervalo (',' numero_intervalo)*;
 numero_intervalo: (op_unario)? NUM_INT (
 		'..' (op_unario)? NUM_INT
 	)?;

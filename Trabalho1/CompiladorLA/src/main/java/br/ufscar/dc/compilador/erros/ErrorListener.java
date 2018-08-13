@@ -12,9 +12,9 @@ public class ErrorListener extends BaseErrorListener {
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object simbolo, int linha, int coluna, String msg, RecognitionException e) throws ParseCancellationException {
         if (simbolo == null) { // Erro lexico
-            int offset = "token recognition error at: '".length();
+            int offset = "token recognition error at: '".length(); // Encontra a posicao do caractere nao identificado
             throw new ParseCancellationException("Linha " + linha + ": " + msg.charAt(offset) + " - simbolo nao identificado");
-        } else {
+        } else { // Erro sintatico
             Token tok = (Token) simbolo;
             if (tok.getText().equals("<EOF>")) {
                 throw new ParseCancellationException("Linha " + linha + ": erro sintatico proximo a EOF");

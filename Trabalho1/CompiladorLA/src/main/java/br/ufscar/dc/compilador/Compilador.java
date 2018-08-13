@@ -13,6 +13,7 @@ public class Compilador {
 
     public static void main(String[] args) {
 
+        // Se segundo parâmetro for passado, redireciona saída para o arquivo
         if (args.length == 2) {
             try {
                 final PrintStream origout = System.out;
@@ -29,17 +30,20 @@ public class Compilador {
             }
         }
 
+        // Ao menos um arquivo deve ser passado para ser compilado
         if (args.length == 1 || args.length == 2) {
             try {
                 String caminho = args[0];
                 CharStream input = CharStreams.fromFileName(caminho);
 
+                // Analise lexica
                 LALexer lexer = new LALexer(input);
                 lexer.removeErrorListeners();
                 lexer.addErrorListener(ErrorListener.INSTANCE);
 
                 CommonTokenStream tokens = new CommonTokenStream(lexer);
 
+                // Analise sintatica
                 LAParser parser = new LAParser(tokens);
                 parser.removeErrorListeners();
                 parser.addErrorListener(ErrorListener.INSTANCE);
@@ -47,11 +51,11 @@ public class Compilador {
                 LAParser.ProgramaContext arvore = parser.programa();
             } catch (IOException ex) {
                 Logger.getLogger(Compilador.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ParseCancellationException ex) {
+            } catch (ParseCancellationException ex) { // Erro de compilacao lexico ou sintatico
                 System.out.println(ex.getMessage());
                 System.out.println("Fim da compilacao");
             }
-        } else {
+        } else { // Nenhum ou mais de dois parametros foram fornecidos
             System.out.println("Erro");
         }
     }

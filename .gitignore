@@ -39,3 +39,7 @@ CorretorTrabalho1/
 
 # Arquivos do NetBeans
 nbactions.xml
+
+# Arquivos do IntelliJ
+.idea/
+*.iml

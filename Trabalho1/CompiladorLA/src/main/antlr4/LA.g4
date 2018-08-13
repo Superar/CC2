@@ -108,7 +108,7 @@ CADEIA: '"' ~('\n' | '\r' | '"')* '"';
 // Numeros inteiros possuem um ou mais dígitos
 NUM_INT: (DIGITO)+;
 // Numeros reais possuem as casas decimais separadas por vírgula
-NUM_REAL: (DIGITO)+ ',' (DIGITO)+;
+NUM_REAL: (DIGITO)+ (',' | '.') (DIGITO)+;
 
 // Ignora comentarios e espacos em branco
 COMENTARIO: '{' .*? '}' {skip();} -> skip;

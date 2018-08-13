@@ -25,6 +25,7 @@ hs_err_pid*
 # Arquivos de teste
 casosDeTesteT1/
 CorretorTrabalho1/
+temp/
 
 # Arquivos gerados pelo ANTLR
 **/src/main/antlr4/.antlr/

@@ -1,29 +1,58 @@
 package br.ufscar.dc.compilador;
 
+import br.ufscar.dc.compilador.erros.ErrorListener;
 import org.antlr.v4.runtime.*;
 import br.ufscar.dc.antlr.*;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
+
+import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Compilador {
 
     public static void main(String[] args) {
-        FileInputStream caminho;
 
-        try {
-            caminho = new FileInputStream(args[0]);
-            ANTLRInputStream input = new ANTLRInputStream(caminho);
-            LALexer lexer = new LALexer(input);
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
-            LAParser parser = new LAParser(tokens);
-            LAParser.ProgramaContext arvore = parser.programa();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Compilador.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Compilador.class.getName()).log(Level.SEVERE, null, ex);
+        if (args.length == 2) {
+            try {
+                final PrintStream origout = System.out;
+                final PrintStream fileout = new PrintStream(args[1]);
+                System.setOut(new PrintStream(new OutputStream() {
+                    @Override
+                    public void write(int i) throws IOException {
+                        origout.write(i);
+                        fileout.write(i);
+                    }
+                }));
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Compilador.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        if (args.length == 1 || args.length == 2) {
+            try {
+                String caminho = args[0];
+                CharStream input = CharStreams.fromFileName(caminho);
+
+                LALexer lexer = new LALexer(input);
+                lexer.removeErrorListeners();
+                lexer.addErrorListener(ErrorListener.INSTANCE);
+
+                CommonTokenStream tokens = new CommonTokenStream(lexer);
+
+                LAParser parser = new LAParser(tokens);
+                parser.removeErrorListeners();
+                parser.addErrorListener(ErrorListener.INSTANCE);
+
+                LAParser.ProgramaContext arvore = parser.programa();
+            } catch (IOException ex) {
+                Logger.getLogger(Compilador.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ParseCancellationException ex) {
+                System.out.println(ex.getMessage());
+                System.out.println("Fim da compilacao");
+            }
+        } else {
+            System.out.println("Erro");
         }
     }
 }

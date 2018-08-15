@@ -13,7 +13,13 @@ public class ErrorListener extends BaseErrorListener {
     public void syntaxError(Recognizer<?, ?> recognizer, Object simbolo, int linha, int coluna, String msg, RecognitionException e) throws ParseCancellationException {
         if (simbolo == null) { // Erro lexico
             int offset = "token recognition error at: '".length(); // Encontra a posicao do caractere nao identificado
-            throw new ParseCancellationException("Linha " + linha + ": " + msg.charAt(offset) + " - simbolo nao identificado");
+            char s = msg.charAt(offset);
+
+            if (s == '{') { // Comentario nao fechado
+                throw new ParseCancellationException("Linha " + (linha + 1) + ": comentario nao fechado");
+            } else { // Erro lexico de simbolo nao identificado
+                throw new ParseCancellationException("Linha " + linha + ": " + msg.charAt(offset) + " - simbolo nao identificado");
+            }
         } else { // Erro sintatico
             Token tok = (Token) simbolo;
             if (tok.getText().equals("<EOF>")) {

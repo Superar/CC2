@@ -11,7 +11,7 @@ public class TabelaDeSimbolos {
         this.simbolos = new ArrayList<>();
     }
 
-    public void adicionarSimbolo(String nome, EntradaTabelaDeSimbolos.Tipo tipo) {
+    public void adicionarSimbolo(String nome, String tipo) {
         simbolos.add(new EntradaTabelaDeSimbolos(nome, tipo));
     }
 
@@ -19,6 +19,16 @@ public class TabelaDeSimbolos {
     boolean temSimbolo(String nome) {
         for (EntradaTabelaDeSimbolos simbolo : simbolos) {
             if (simbolo.equals(nome)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Verifica se um determinado tipo existe na tabela
+    boolean temTipo(String nome) {
+        for (EntradaTabelaDeSimbolos tipo : simbolos) {
+            if (tipo.equals(nome) && tipo.getTipo().equals(("tipo"))) {
                 return true;
             }
         }

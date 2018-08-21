@@ -13,7 +13,10 @@ declaracao_local:
 	'declare' variavel
 	| 'constante' IDENT ':' tipo_basico '=' valor_constante
 	| 'tipo' IDENT ':' tipo;
-variavel: identificador (',' identificador)* ':' tipo;
+variavel:
+	primeiroIdentificador = identificador (
+		',' listaIdentificador += identificador
+	)* ':' tipo;
 identificador: IDENT ('.' IDENT)* dimensao;
 dimensao: ('[' exp_aritmetica ']')*;
 tipo: registro | tipo_estentido;
@@ -49,8 +52,13 @@ cmd:
 	| cmdChamada
 	| cmdRetorne;
 cmdLeia:
-	'leia' '(' ('^')? identificador (',' ('^')? identificador)* ')';
-cmdEscreva: 'escreva' '(' expressao (',' expressao)* ')';
+	'leia' '(' ('^')? primeiroIdentificador = identificador (
+		',' ('^')? listaIdentificador += identificador
+	)* ')';
+cmdEscreva:
+	'escreva' '(' primeiraExpressao = expressao (
+		',' listaExpressao += expressao
+	)* ')';
 cmdSe: 'se' expressao 'entao' (cmd)* ('senao' (cmd)*)? 'fim_se';
 cmdCaso:
 	'caso' exp_aritmetica 'seja' selecao ('senao' (cmd)*)? 'fim_caso';
@@ -70,9 +78,9 @@ numero_intervalo: (op_unario)? NUM_INT (
 		'..' (op_unario)? NUM_INT
 	)?;
 op_unario: '-';
-exp_aritmetica: termo (op1 termo)*;
-termo: fator (op2 fator)*;
-fator: parcela (op3 parcela)*;
+exp_aritmetica: primeiroTermo = termo (op1 listaTermo += termo)*;
+termo: primeiroFator = fator (op2 listaFator += fator)*;
+fator: primeiraParcela = parcela (op3 listaParcela += parcela)*;
 op1: '+' | '-';
 op2: '*' | '/';
 op3: '%';
@@ -83,10 +91,10 @@ parcela_unario: ('^')? identificador
 	| NUM_REAL
 	| '(' expressao ')';
 parcela_nao_unario: '&' identificador | CADEIA;
-exp_relacional: exp_aritmetica (op_relacional exp_aritmetica)?;
+exp_relacional: exp1 = exp_aritmetica (op_relacional exp2 = exp_aritmetica)?;
 op_relacional: '=' | '<>' | '>=' | '<=' | '>' | '<';
-expressao: termo_logico (op_logico_1 termo_logico)*;
-termo_logico: fator_logico (op_logico_2 fator_logico)*;
+expressao: primeiroTermo = termo_logico (op_logico_1 listaTermo += termo_logico)*;
+termo_logico: primeiroFator = fator_logico (op_logico_2 listaFator += fator_logico)*;
 fator_logico: ('nao')? parcela_logica;
 parcela_logica: ('verdadeiro' | 'falso') | exp_relacional;
 op_logico_1: 'ou';

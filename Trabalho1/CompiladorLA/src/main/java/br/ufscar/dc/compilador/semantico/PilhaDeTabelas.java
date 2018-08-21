@@ -15,6 +15,17 @@ public class PilhaDeTabelas extends Stack<TabelaDeSimbolos> {
         return false;
     }
 
+    // Verifica se um determinado tipo existe
+    // em qualquer tabela da pilha
+    public boolean temTipo(String nome) {
+        for (TabelaDeSimbolos tabela : this) {
+            if (tabela.temTipo(nome)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public TabelaDeSimbolos topo() {
         return this.peek();
     }

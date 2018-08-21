@@ -1,6 +1,8 @@
 package br.ufscar.dc.compilador;
 
 import br.ufscar.dc.compilador.erros.ErrorListener;
+import br.ufscar.dc.compilador.semantico.AnalisadorSemantico;
+
 import org.antlr.v4.runtime.*;
 import br.ufscar.dc.antlr.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
@@ -48,7 +50,12 @@ public class Compilador {
                 parser.removeErrorListeners();
                 parser.addErrorListener(ErrorListener.INSTANCE);
 
+                // Analise semantica
                 LAParser.ProgramaContext arvore = parser.programa();
+                AnalisadorSemantico analisadorSemantico = new AnalisadorSemantico(arvore);
+                if (analisadorSemantico.erros.temErros()) {
+                    throw new ParseCancellationException(analisadorSemantico.erros.toString());
+                }
             } catch (IOException ex) {
                 Logger.getLogger(Compilador.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ParseCancellationException ex) { // Erro de compilacao lexico ou sintatico

@@ -1,13 +1,10 @@
 package br.ufscar.dc.compilador.semantico;
 
 public class EntradaTabelaDeSimbolos {
-    public enum Tipo {INT, REAL, LITERAL}
-
-    ;
     private String nome;
-    private Tipo tipo;
+    private String tipo;
 
-    EntradaTabelaDeSimbolos(String nome, Tipo tipo) {
+    EntradaTabelaDeSimbolos(String nome, String tipo) {
         this.nome = nome;
         this.tipo = tipo;
     }
@@ -17,7 +14,7 @@ public class EntradaTabelaDeSimbolos {
     }
 
     public String getTipo() {
-        return tipo.name();
+        return tipo;
     }
 
     boolean equals(String o) {

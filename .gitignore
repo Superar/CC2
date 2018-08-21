@@ -44,3 +44,9 @@ nbactions.xml
 # Arquivos do IntelliJ
 .idea/
 *.iml
+
+# Arquivos do VSCode
+.settings/
+.classpath
+.project
+settings.json

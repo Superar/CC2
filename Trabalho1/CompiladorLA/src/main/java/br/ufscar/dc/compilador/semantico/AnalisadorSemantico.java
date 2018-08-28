@@ -9,7 +9,6 @@ import br.ufscar.dc.compilador.erros.ErroSemantico;
 // TODO: Verificar tipos na atribuicao. Casos de teste: 4, 6, 7, 8, 9, 10, 11,
 // 14
 // TODO: Verificar tipos dos parametros na chama de funcao. Caso de teste: 13
-// TODO: Corrigir acesso a valor em vetor. Caso de teste: 14
 public class AnalisadorSemantico extends LABaseVisitor<String> {
     PilhaDeTabelas escopos;
     public ErroSemantico erros;

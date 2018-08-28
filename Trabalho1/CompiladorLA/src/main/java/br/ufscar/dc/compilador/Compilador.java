@@ -52,7 +52,8 @@ public class Compilador {
 
                 // Analise semantica
                 LAParser.ProgramaContext arvore = parser.programa();
-                AnalisadorSemantico analisadorSemantico = new AnalisadorSemantico(arvore);
+                AnalisadorSemantico analisadorSemantico = new AnalisadorSemantico();
+                analisadorSemantico.visitPrograma(arvore);
                 if (analisadorSemantico.erros.temErros()) {
                     throw new ParseCancellationException(analisadorSemantico.erros.toString());
                 }

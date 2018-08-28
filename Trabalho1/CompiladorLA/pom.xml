@@ -26,6 +26,7 @@
                 <artifactId>antlr4-maven-plugin</artifactId>
                 <version>4.7</version>
                 <configuration>
+                    <visitor>true</visitor>
                     <sourceDirectory>src/main/antlr4</sourceDirectory>
                     <outputDirectory>src/main/java/br/ufscar/dc/antlr</outputDirectory>
                 </configuration>

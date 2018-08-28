@@ -17,7 +17,7 @@ variavel:
 	primeiroIdentificador = identificador (
 		',' listaIdentificador += identificador
 	)* ':' tipo;
-identificador: IDENT ('.' IDENT)* dimensao;
+identificador: primeiroIdent = IDENT ('.' listaIdent += IDENT)* dimensao;
 dimensao: ('[' exp_aritmetica ']')*;
 tipo: registro | tipo_estentido;
 tipo_basico: 'literal' | 'inteiro' | 'real' | 'logico';
@@ -32,12 +32,14 @@ valor_constante:
 registro: 'registro' (variavel)* 'fim_registro';
 declaracao_global:
 	'procedimento' IDENT '(' (parametros)? ')' (declaracao_local)* (
-		cmd
+		cmdProcedimento += cmd
 	)* 'fim_procedimento'
 	| 'funcao' IDENT '(' (parametros)? ')' ':' tipo_estentido (
 		declaracao_local
 	)* (cmd)* 'fim_funcao';
-parametro: ('var')? identificador (',' identificador)* ':' tipo_estentido;
+parametro: ('var')? primeiroIdentificador = identificador (
+		',' listaIdentificador += identificador
+	)* ':' tipo_estentido;
 parametros: parametro (',' parametro)*;
 corpo: (declaracao_local)* (cmd)*;
 cmd:
@@ -78,7 +80,8 @@ numero_intervalo: (op_unario)? NUM_INT (
 		'..' (op_unario)? NUM_INT
 	)?;
 op_unario: '-';
-exp_aritmetica: primeiroTermo = termo (op1 listaTermo += termo)*;
+exp_aritmetica:
+	primeiroTermo = termo (op1 listaTermo += termo)*;
 termo: primeiroFator = fator (op2 listaFator += fator)*;
 fator: primeiraParcela = parcela (op3 listaParcela += parcela)*;
 op1: '+' | '-';
@@ -91,10 +94,17 @@ parcela_unario: ('^')? identificador
 	| NUM_REAL
 	| '(' expressao ')';
 parcela_nao_unario: '&' identificador | CADEIA;
-exp_relacional: exp1 = exp_aritmetica (op_relacional exp2 = exp_aritmetica)?;
+exp_relacional:
+	exp1 = exp_aritmetica (op_relacional exp2 = exp_aritmetica)?;
 op_relacional: '=' | '<>' | '>=' | '<=' | '>' | '<';
-expressao: primeiroTermo = termo_logico (op_logico_1 listaTermo += termo_logico)*;
-termo_logico: primeiroFator = fator_logico (op_logico_2 listaFator += fator_logico)*;
+expressao:
+	primeiroTermo = termo_logico (
+		op_logico_1 listaTermo += termo_logico
+	)*;
+termo_logico:
+	primeiroFator = fator_logico (
+		op_logico_2 listaFator += fator_logico
+	)*;
 fator_logico: ('nao')? parcela_logica;
 parcela_logica: ('verdadeiro' | 'falso') | exp_relacional;
 op_logico_1: 'ou';

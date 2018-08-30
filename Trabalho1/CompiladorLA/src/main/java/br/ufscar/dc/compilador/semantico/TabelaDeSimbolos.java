@@ -34,4 +34,14 @@ public class TabelaDeSimbolos {
         }
         return false;
     }
+
+    // Retorna o tipo de um simbolo pelo nome
+    public String getTipoPorNome(String nome) {
+        for (EntradaTabelaDeSimbolos simbolo : simbolos) {
+            if (simbolo.equals(nome)) {
+                return simbolo.getTipo();
+            }
+        }
+        return null;
+    }
 }

@@ -26,6 +26,16 @@ public class PilhaDeTabelas extends Stack<TabelaDeSimbolos> {
         return false;
     }
 
+    // Retorna o tipo de um determinado simbolo
+    public String getTipoPorNome(String nome) {
+        for (TabelaDeSimbolos tabela : this) {
+            if (tabela.temSimbolo(nome)) {
+                return tabela.getTipoPorNome(nome);
+            }
+        }
+        return null;
+    }
+
     public TabelaDeSimbolos topo() {
         return this.peek();
     }

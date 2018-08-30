@@ -1,13 +1,15 @@
 package br.ufscar.dc.compilador.semantico;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.ArrayList;
+
 import br.ufscar.dc.antlr.LABaseVisitor;
 import br.ufscar.dc.antlr.LAParser.*;
 import br.ufscar.dc.compilador.erros.ErroSemantico;
 
 // TODO: Verificar identificadores de registro corretamente. Caso de teste: 11,
 // 12, 15, 17
-// TODO: Verificar tipos na atribuicao. Casos de teste: 4, 6, 7, 8, 9, 10, 11,
-// 14
 // TODO: Verificar tipos dos parametros na chama de funcao. Caso de teste: 13
 public class AnalisadorSemantico extends LABaseVisitor<String> {
     PilhaDeTabelas escopos;
@@ -201,14 +203,38 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
         return visitChildren(ctx);
     }
 
-    // cmdAtribuicao: ('^')? identificador '<-' expressao;
+    // cmdAtribuicao: (ponteiro = '^')? identificador '<-' expressao;
     @Override
     public String visitCmdAtribuicao(CmdAtribuicaoContext ctx) {
         if (!escopos.temSimbolo(ctx.identificador().primeiroIdent.getText())) {
             erros.adicionarErro("Linha " + ctx.identificador().getStart().getLine() + ": identificador "
                     + ctx.identificador().primeiroIdent.getText() + " nao declarado");
         }
-        return visitChildren(ctx);
+
+        // Verifica o tipo do identificador e das expressoes
+        String ret = visitChildren(ctx);
+        ArrayList<String> tipos = new ArrayList<>(Arrays.asList(ret.split(",")));
+        // Adiciona o tipo do identificador na lista de tipos
+        tipos.add(0, escopos.getTipoPorNome(ctx.identificador().getText()));
+
+        // Substitui valores
+        // Operacoes entre inteiros e reais devem ser permitidas (sao numeros)
+        Collections.replaceAll(tipos, "inteiro", "num");
+        Collections.replaceAll(tipos, "real", "num");
+        // Ponteiros devem receber enderecos
+        Collections.replaceAll(tipos, "^inteiro", "ponteiro");
+
+        // Se existe mais de um tipo na atribuicao, a operacao nao e compativel
+        if (tipos.stream().distinct().limit(2).count() > 1) {
+            // Simbolo sendo atribuido deve existir na lista de simbolos para gerar o
+            // erro de
+            if (escopos.temSimbolo(ctx.identificador().primeiroIdent.getText())) {
+                erros.adicionarErro("Linha " + ctx.getStart().getLine() + ": atribuicao nao compativel para "
+                        + ctx.getText().split("<-")[0]);
+            }
+        }
+
+        return null;
     }
 
     /*
@@ -224,6 +250,75 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
             }
         }
 
-        return visitChildren(ctx);
+        String ret = visitChildren(ctx);
+
+        // Verifica o tipo da parcela
+        // Caso nao seja inteiro, ou real, sera o tipo do identificador
+        // Caso nao seja nenhum desses tipos, sera o tipo da expressao entre
+        // parenteses
+        if (ctx.NUM_INT() != null) {
+            return "inteiro";
+        } else if (ctx.NUM_REAL() != null) {
+            return "real";
+        } else if (ctx.identificador() != null) {
+            return escopos.getTipoPorNome(ctx.identificador().primeiroIdent.getText());
+        } else {
+            return ret;
+        }
+    }
+
+    // parcela_nao_unario: '&' identificador | CADEIA;
+    @Override
+    public String visitParcela_nao_unario(Parcela_nao_unarioContext ctx) {
+        visitChildren(ctx);
+
+        // Se for cadeira, retorna o tipo literal, senao sera ponteiro
+        if (ctx.CADEIA() != null) {
+            return "literal";
+        } else {
+            return "ponteiro";
+        }
+    }
+
+    // exp_relacional: exp1 = exp_aritmetica (op_relacional exp2 =
+    // exp_aritmetica)?;
+    @Override
+    public String visitExp_relacional(Exp_relacionalContext ctx) {
+        String ret = visitChildren(ctx);
+
+        // Caso haja algum operador relacional
+        // O tipo da expressao passa a ser logico
+        if (ctx.op_relacional() != null) {
+            return "logico";
+        } else {
+            return ret;
+        }
+    }
+
+    // parcela_logica: constante = ('verdadeiro' | 'falso') | exp_relacional;
+    @Override
+    public String visitParcela_logica(Parcela_logicaContext ctx) {
+        String ret = visitChildren(ctx);
+        if (ctx.constante != null) {
+            return "logico";
+        } else {
+            return ret;
+        }
+    }
+
+    // Funcao que muda o comportamento dos retornos do metodo visitChildren
+    // O metodo visitChildren retornara uma string com todos os retornos dos
+    // filhos separados por virgula
+    @Override
+    protected String aggregateResult(String aggregate, String nextResult) {
+        if (nextResult != null) {
+            if (aggregate == null) {
+                return nextResult;
+            } else {
+                return aggregate + "," + nextResult;
+            }
+        } else {
+            return aggregate;
+        }
     }
 }

@@ -17,7 +17,11 @@ variavel:
 	primeiroIdentificador = identificador (
 		',' listaIdentificador += identificador
 	)* ':' tipo;
-identificador: primeiroIdent = IDENT ('.' listaIdent += IDENT)* dimensao;
+
+// Retorna o tipo do identificador para adaptacao do codigo gerado
+identificador
+	returns[String tipoVar]:
+	primeiroIdent = IDENT ('.' listaIdent += IDENT)* dimensao;
 dimensao: ('[' exp_aritmetica ']')*;
 tipo: registro | tipo_estentido;
 tipo_basico: 'literal' | 'inteiro' | 'real' | 'logico';
@@ -30,17 +34,20 @@ valor_constante:
 	| 'verdadeiro'
 	| 'falso';
 registro: 'registro' (variavel)* 'fim_registro';
+
+// Opcionalidade dos parametros foi movida para a regra `parametro` Parenteses obrigatorios tambem
+// foram movidos
 declaracao_global:
-	'procedimento' IDENT '(' (parametros)? ')' (declaracao_local)* (
-		cmdProcedimento += cmd
-	)* 'fim_procedimento'
-	| 'funcao' IDENT '(' (parametros)? ')' ':' tipo_estentido (
+	procedimento = 'procedimento' IDENT parametros (
+		declaracao_local
+	)* (cmdProcedimento += cmd)* 'fim_procedimento'
+	| 'funcao' IDENT parametros ':' tipo_estentido (
 		declaracao_local
 	)* (cmd)* 'fim_funcao';
 parametro: ('var')? primeiroIdentificador = identificador (
 		',' listaIdentificador += identificador
 	)* ':' tipo_estentido;
-parametros: parametro (',' parametro)*;
+parametros: '(' (parametro (',' parametro)*)? ')';
 corpo: (declaracao_local)* (cmd)*;
 cmd:
 	cmdLeia
@@ -61,17 +68,25 @@ cmdEscreva:
 	'escreva' '(' primeiraExpressao = expressao (
 		',' listaExpressao += expressao
 	)* ')';
-cmdSe: 'se' expressao 'entao' (cmd)* ('senao' (cmd)*)? 'fim_se';
+
+// cmdSe separado em cmdSe e cmdSenao para geracao de codigo
+cmdSe:
+	'se' expressao 'entao' (listaCmdSe += cmd)* (cmdSenao)? 'fim_se';
+cmdSenao: 'senao' (cmd)*;
+
+// cmdCaso separado em cmdCaso e cmdCasoSenao para geracao de codigo
 cmdCaso:
-	'caso' exp_aritmetica 'seja' selecao ('senao' (cmd)*)? 'fim_caso';
+	'caso' exp_aritmetica 'seja' selecao (cmdCasoSenao)? 'fim_caso';
+cmdCasoSenao: 'senao' (cmd)*;
 cmdPara:
 	'para' IDENT '<-' exp_aritmetica 'ate' exp_aritmetica 'faca' (
 		cmd
 	)* 'fim_para';
 cmdEnquanto: 'enquanto' expressao 'faca' (cmd)* 'fim_enquanto';
 cmdFaca: 'faca' (cmd)* 'ate' expressao;
-cmdAtribuicao:(ponteiro = '^')? identificador '<-' expressao;
-cmdChamada: IDENT '(' expressao (',' expressao)* ')';
+cmdAtribuicao: (ponteiro = '^')? identificador '<-' expressao;
+cmdChamada:
+	IDENT '(' primeiraExp = expressao (',' listaExp += expressao)* ')';
 cmdRetorne: 'retorne' expressao;
 selecao: (item_selecao)*;
 item_selecao: constantes ':' (cmd)*;
@@ -97,7 +112,8 @@ parcela_nao_unario: '&' identificador | CADEIA;
 exp_relacional:
 	exp1 = exp_aritmetica (op_relacional exp2 = exp_aritmetica)?;
 op_relacional: '=' | '<>' | '>=' | '<=' | '>' | '<';
-expressao:
+expressao
+	returns[String tipoVar]:
 	primeiroTermo = termo_logico (
 		op_logico_1 listaTermo += termo_logico
 	)*;
@@ -105,8 +121,10 @@ termo_logico:
 	primeiroFator = fator_logico (
 		op_logico_2 listaFator += fator_logico
 	)*;
-fator_logico: ('nao')? parcela_logica;
-parcela_logica: constante = ('verdadeiro' | 'falso') | exp_relacional;
+fator_logico: (nao = 'nao')? parcela_logica;
+parcela_logica:
+	constante = ('verdadeiro' | 'falso')
+	| exp_relacional;
 op_logico_1: 'ou';
 op_logico_2: 'e';
 

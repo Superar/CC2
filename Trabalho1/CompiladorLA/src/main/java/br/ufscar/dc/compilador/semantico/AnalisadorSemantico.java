@@ -101,6 +101,23 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
         return visitChildren(ctx);
     }
 
+    // identificador returns [String tipoVar]: primeiroIdent = IDENT ('.'
+    // listaIdent
+    // += IDENT)* dimensao;
+    @Override
+    public String visitIdentificador(IdentificadorContext ctx) {
+        if (ctx.listaIdent.size() > 0) {
+            // O tipo a ser usado sera o do ultimo identificador
+            String ultimoIdent = ctx.listaIdent.get(ctx.listaIdent.size() - 1).getText();
+            ctx.tipoVar = escopos.getTipoPorNome(ultimoIdent);
+        } else {
+            // So um identificador
+            ctx.tipoVar = escopos.getTipoPorNome(ctx.primeiroIdent.getText());
+        }
+
+        return visitChildren(ctx);
+    }
+
     // tipo_basico_ident: tipo_basico | IDENT;
     @Override
     public String visitTipo_basico_ident(Tipo_basico_identContext ctx) {
@@ -293,6 +310,13 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
         } else {
             return ret;
         }
+    }
+
+    @Override
+    public String visitExpressao(ExpressaoContext ctx) {
+        String ret = visitChildren(ctx);
+        ctx.tipoVar = ret;
+        return ret;
     }
 
     // parcela_logica: constante = ('verdadeiro' | 'falso') | exp_relacional;

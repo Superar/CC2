@@ -1,11 +1,13 @@
 package br.ufscar.dc.compilador;
 
 import br.ufscar.dc.compilador.erros.ErrorListener;
+import br.ufscar.dc.compilador.gerador.GeradorDeCodigo;
 import br.ufscar.dc.compilador.semantico.AnalisadorSemantico;
 
 import org.antlr.v4.runtime.*;
 import br.ufscar.dc.antlr.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.io.*;
 import java.util.logging.Level;
@@ -57,6 +59,12 @@ public class Compilador {
                 if (analisadorSemantico.erros.temErros()) {
                     throw new ParseCancellationException(analisadorSemantico.erros.toString());
                 }
+
+                // Geracao de codigo
+                GeradorDeCodigo gerador = new GeradorDeCodigo();
+                ParseTreeWalker walker = new ParseTreeWalker();
+                walker.walk(gerador, arvore);
+                System.out.println(gerador.getCodigo());
             } catch (IOException ex) {
                 Logger.getLogger(Compilador.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ParseCancellationException ex) { // Erro de compilacao lexico ou sintatico

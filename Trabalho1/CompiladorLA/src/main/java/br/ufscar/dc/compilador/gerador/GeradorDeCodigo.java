@@ -21,38 +21,59 @@ public class GeradorDeCodigo extends LABaseListener {
         return codigo;
     }
 
+    // Cabecalho do programa
     @Override
     public void enterPrograma(ProgramaContext ctx) {
         codigo += "#include <stdlib.h>\n";
         codigo += "#include <stdio.h>\n";
     }
 
+    // Inicio da funcao main
     @Override
     public void enterCorpo(CorpoContext ctx) {
         codigo += "int main () {";
     }
 
+    // Final da funcao main
     @Override
     public void exitCorpo(CorpoContext ctx) {
         codigo += "return 0;";
         codigo += "}";
     }
 
+    // Ao entrar na regra de variavel realiza a identificacao dos tipos
     @Override
     public void enterVariavel(VariavelContext ctx) {
-        if (ctx.tipo().getText().equals("inteiro")) {
-            codigo += "int ";
-        } else if (ctx.tipo().getText().equals("real")) {
-            codigo += "float ";
-        } else if (ctx.tipo().getText().equals("literal")) {
-            codigo += "char ";
-        }
+        // So substitui tipos se for um tipo estendido
+        if (ctx.tipo().tipo_estentido() != null) {
+            String tipo = ctx.tipo().getText();
+            tipo = tipo.replace("^", ""); // Ponteiro adicionado depois do tipo
+            // Substitui tipos
+            tipo = tipo.replace("inteiro", "int");
+            tipo = tipo.replace("real", "float");
+            tipo = tipo.replace("literal", "char");
+            codigo += tipo;
 
+            // Adiciona tipo de ponteiro
+            if (ctx.tipo().getText().startsWith("^")) {
+                codigo += "*";
+            }
+        }
+    }
+
+    // Ao sair da regra "variavel" adiciona o identificador com ponto e virgula
+    @Override
+    public void exitVariavel(VariavelContext ctx) {
+        codigo += " ";
         codigo += ctx.primeiroIdentificador.getText();
+
+        // Se for um literal, adiciona o tamanho do array de char
         if (ctx.tipo().getText().equals("literal")) {
             codigo += "[80]";
         }
 
+        // Caso tenha outras variaveis sendo declaradas, as inclui no codigo
+        // Lembrar de adicionar o tamanho do array se for literal
         if (ctx.listaIdentificador != null) {
             for (IdentificadorContext identificador : ctx.listaIdentificador) {
                 codigo += ", ";
@@ -62,12 +83,14 @@ public class GeradorDeCodigo extends LABaseListener {
                 }
             }
         }
-
         codigo += ";";
     }
 
+    // Comando leia precisa verificar o tipo da variavel sendo lida
+    // para corresponder a string do scanf
     @Override
     public void enterCmdLeia(CmdLeiaContext ctx) {
+        // Para ler literal usa-se a funcao gets()
         if (ctx.primeiroIdentificador.tipoVar.equals("literal")) {
             codigo += "gets(";
         } else {
@@ -117,10 +140,22 @@ public class GeradorDeCodigo extends LABaseListener {
 
     @Override
     public void enterCmdAtribuicao(CmdAtribuicaoContext ctx) {
-        codigo += ctx.identificador().getText();
-        codigo += "=";
-        codigo += expFmt.formataExpressao(ctx.expressao());
-        codigo += ";";
+        // Atribuicao de literal e feita com a funcao strcpy()
+        if (ctx.identificador().tipoVar.equals("literal")) {
+            codigo += "strcpy(";
+            codigo += ctx.identificador().getText();
+            codigo += ",";
+            codigo += expFmt.formataExpressao(ctx.expressao());
+            codigo += ");";
+        } else {
+            if (ctx.ponteiro != null) {
+                codigo += "*";
+            }
+            codigo += ctx.identificador().getText();
+            codigo += "=";
+            codigo += expFmt.formataExpressao(ctx.expressao());
+            codigo += ";";
+        }
     }
 
     @Override
@@ -297,5 +332,35 @@ public class GeradorDeCodigo extends LABaseListener {
     @Override
     public void exitParametros(ParametrosContext ctx) {
         codigo += "){";
+    }
+
+    // Caso a declaracao local seja um tipo, deve-se adicionar
+    // a palavra chave typedef antes do struct
+    @Override
+    public void enterDeclaracao_local(Declaracao_localContext ctx) {
+        if (ctx.tipo() != null) {
+            codigo += "typedef ";
+        }
+    }
+
+    // Caso a declaracao local seja um tipo, deve-se adicionar
+    // o identificador no final do struct
+    @Override
+    public void exitDeclaracao_local(Declaracao_localContext ctx) {
+        if (ctx.tipo() != null) {
+            codigo += " ";
+            codigo += ctx.IDENT().getText();
+            codigo += ";";
+        }
+    }
+
+    @Override
+    public void enterRegistro(RegistroContext ctx) {
+        codigo += "struct {";
+    }
+
+    @Override
+    public void exitRegistro(RegistroContext ctx) {
+        codigo += "}";
     }
 }

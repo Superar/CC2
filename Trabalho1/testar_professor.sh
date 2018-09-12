@@ -1,7 +1,7 @@
 TIPO=""
 EXEC="java -jar CompiladorLA/target/CompiladorLA-1.0-SNAPSHOT-jar-with-dependencies.jar"
 ARQUIVOS_TESTE="casosDeTesteT1"
-RA="587265"
+RA="587265_e_619736"
 
 USAGE_MSG="Uso:\n--sintatico | -s \t Teste sintatico\n--semantico | -m \t Teste semantico\n--gerador | -g \t Testa gerador de codigo\n--tudo | -t \t Testa tudo"
 

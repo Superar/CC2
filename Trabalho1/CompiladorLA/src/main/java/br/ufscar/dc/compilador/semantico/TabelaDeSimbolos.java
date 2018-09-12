@@ -9,10 +9,11 @@ public class TabelaDeSimbolos {
     public TabelaDeSimbolos(String escopo) {
         this.escopo = escopo;
         this.simbolos = new ArrayList<>();
+
     }
 
-    public void adicionarSimbolo(String nome, String tipo) {
-        simbolos.add(new EntradaTabelaDeSimbolos(nome, tipo));
+    public void adicionarSimbolo(String nome, String tipo, String tipoEntrada, ArrayList<String> listParam, TabelaDeSimbolos tabelaRegistro) {
+        simbolos.add(new EntradaTabelaDeSimbolos(nome, tipo, tipoEntrada, listParam, tabelaRegistro));
     }
 
     // Verifica se um determinado simbolo existe na tabela

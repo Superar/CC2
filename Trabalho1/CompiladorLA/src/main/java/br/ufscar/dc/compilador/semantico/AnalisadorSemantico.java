@@ -303,7 +303,14 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
         String ret = visitChildren(ctx);
         ArrayList<String> tipos = new ArrayList<>(Arrays.asList(ret.split(",")));
         // Adiciona o tipo do identificador na lista de tipos
-        tipos.add(0, escopos.getTipoPorNome(ctx.identificador().getText()));
+        if (ctx.ponteiro != null) {
+            // Se estiver atribuindo a um ponteiro, o tipo da atribuicao e o tipo para que o
+            // ponteiro aponta
+            tipos.add(0, escopos.getTipoPorNome(ctx.identificador().getText()).replace("^", ""));
+        } else {
+            // Nao tem o simbolo de ponteiro, entao atribui um ponteiro diretamente
+            tipos.add(0, escopos.getTipoPorNome(ctx.identificador().getText()));
+        }
 
         // Substitui valores
         // Operacoes entre inteiros e reais devem ser permitidas (sao numeros)

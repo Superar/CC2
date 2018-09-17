@@ -299,33 +299,44 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
                     + ctx.identificador().primeiroIdent.getText() + " nao declarado");
         }
 
+        IdentificadorDeTipos idt = new IdentificadorDeTipos(escopos);
+
         // Verifica o tipo do identificador e das expressoes
         String ret = visitChildren(ctx);
-        ArrayList<String> tipos = new ArrayList<>(Arrays.asList(ret.split(",")));
-        // Adiciona o tipo do identificador na lista de tipos
-        if (ctx.ponteiro != null) {
-            // Se estiver atribuindo a um ponteiro, o tipo da atribuicao e o tipo para que o
-            // ponteiro aponta
-            tipos.add(0, escopos.getTipoPorNome(ctx.identificador().getText()).replace("^", ""));
-        } else {
-            // Nao tem o simbolo de ponteiro, entao atribui um ponteiro diretamente
-            tipos.add(0, escopos.getTipoPorNome(ctx.identificador().getText()));
+        String tipo_exp = idt.identificaTipoExpressao(ctx.expressao());
+        String tipo_ident;
+
+        String nomeIdent = ctx.identificador().primeiroIdent.getText();
+        if (ctx.identificador().listaIdent != null) {
+            for (Token ident : ctx.identificador().listaIdent) {
+                nomeIdent += ".";
+                nomeIdent += ident.getText();
+            }
         }
 
-        // Substitui valores
-        // Operacoes entre inteiros e reais devem ser permitidas (sao numeros)
-        Collections.replaceAll(tipos, "inteiro", "num");
-        Collections.replaceAll(tipos, "real", "num");
-        // Ponteiros devem receber enderecos
-        Collections.replaceAll(tipos, "^inteiro", "ponteiro");
+        // Adiciona o tipo do identificador na lista de tipos
+        if (ctx.ponteiro != null) {
+            // Se estiver atribuindo a um ponteiro, o tipo da atribuicao e o tipo para
+            // que o ponteiro aponta
+            tipo_ident = escopos.getTipoPorNome(nomeIdent).replace("^", "");
+        } else {
+            // Nao tem o simbolo de ponteiro, entao atribui um ponteiro diretamente
+            tipo_ident = escopos.getTipoPorNome(nomeIdent);
+        }
 
-        // Se existe mais de um tipo na atribuicao, a operacao nao e compativel
-        if (tipos.stream().distinct().limit(2).count() > 1) {
-            // Simbolo sendo atribuido deve existir na lista de simbolos para gerar o
-            // erro de
-            if (escopos.temSimbolo(ctx.identificador().primeiroIdent.getText())) {
-                erros.adicionarErro("Linha " + ctx.getStart().getLine() + ": atribuicao nao compativel para "
-                        + ctx.getText().split("<-")[0]);
+        if (tipo_ident != null) {
+            tipo_ident = tipo_ident.replace("^inteiro", "ponteiro");
+            tipo_ident = tipo_ident.replace("inteiro", "num");
+            tipo_ident = tipo_ident.replace("real", "num");
+
+            // Se existe mais de um tipo na atribuicao, a operacao nao e compativel
+            if (!tipo_ident.equals(tipo_exp)) {
+                // Simbolo sendo atribuido deve existir na lista de simbolos para gerar
+                // o erro de atribuicao nao compativel
+                if (escopos.temSimbolo(ctx.identificador().primeiroIdent.getText())) {
+                    erros.adicionarErro("Linha " + ctx.getStart().getLine() + ": atribuicao nao compativel para "
+                            + ctx.getText().split("<-")[0]);
+                }
             }
         }
 
@@ -366,6 +377,8 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
             // Lista com os tipos dos parametros sendo usados na chamada
             ArrayList<String> parametros = new ArrayList<>();
             for (ExpressaoContext exp : ctx.expressao()) {
+                IdentificadorDeTipos idt = new IdentificadorDeTipos(escopos);
+                // System.out.println(idt.identificaTipoExpressao(exp));
                 parametros.add(escopos.getTipoPorNome(exp.getText().split("\\(|\\[")[0]));
             }
 
@@ -380,65 +393,12 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
         }
     }
 
-    // parcela_nao_unario: '&' identificador | CADEIA;
-    @Override
-    public String visitParcela_nao_unario(Parcela_nao_unarioContext ctx) {
-        visitChildren(ctx);
-
-        // Se for cadeira, retorna o tipo literal, senao sera ponteiro
-        if (ctx.CADEIA() != null) {
-            return "literal";
-        } else {
-            return "ponteiro";
-        }
-    }
-
-    // exp_relacional: exp1 = exp_aritmetica (op_relacional exp2 =
-    // exp_aritmetica)?;
-    @Override
-    public String visitExp_relacional(Exp_relacionalContext ctx) {
-        String ret = visitChildren(ctx);
-
-        // Caso haja algum operador relacional
-        // O tipo da expressao passa a ser logico
-        if (ctx.op_relacional() != null) {
-            return "logico";
-        } else {
-            return ret;
-        }
-    }
-
+    // expressao returns[String tipoVar]: primeiroTermo = termo_logico
+    // (op_logico_1 listaTermo += termo_logico)*;
     @Override
     public String visitExpressao(ExpressaoContext ctx) {
-        String ret = visitChildren(ctx);
-        ctx.tipoVar = ret;
-        return ret;
-    }
-
-    // parcela_logica: constante = ('verdadeiro' | 'falso') | exp_relacional;
-    @Override
-    public String visitParcela_logica(Parcela_logicaContext ctx) {
-        String ret = visitChildren(ctx);
-        if (ctx.constante != null) {
-            return "logico";
-        } else {
-            return ret;
-        }
-    }
-
-    // Funcao que muda o comportamento dos retornos do metodo visitChildren
-    // O metodo visitChildren retornara uma string com todos os retornos dos
-    // filhos separados por virgula
-    @Override
-    protected String aggregateResult(String aggregate, String nextResult) {
-        if (nextResult != null) {
-            if (aggregate == null) {
-                return nextResult;
-            } else {
-                return aggregate + "," + nextResult;
-            }
-        } else {
-            return aggregate;
-        }
+        IdentificadorDeTipos idt = new IdentificadorDeTipos(escopos);
+        idt.identificaTipoExpressao(ctx); // Forca identificacao do tipo para geracao de codigo
+        return visitChildren(ctx);
     }
 }

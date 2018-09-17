@@ -14,7 +14,7 @@ public class EntradaTabelaDeSimbolos {
         this.nome = nome;
         this.tipo = tipo;
         this.tipoEntrada = tipoEntrada;
-        this.listParam = new ArrayList<String>();
+        this.listParam = listParam;
         this.tabelaRegistro = tabelaRegistro;
     }
 

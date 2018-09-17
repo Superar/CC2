@@ -42,6 +42,18 @@ public class PilhaDeTabelas {
         return null;
     }
 
+    // Retorna a entrada da tabela correspondente ao nome do simbolo
+    public EntradaTabelaDeSimbolos getEntradaPorNome(String nome) {
+        EntradaTabelaDeSimbolos ret = null;
+        for (TabelaDeSimbolos tabela : this.pilha) {
+            ret = tabela.getEntradaPorNome(nome);
+            if (ret != null) {
+                return ret;
+            }
+        }
+        return ret;
+    }
+
     public TabelaDeSimbolos topo() {
         return this.pilha.peek();
     }

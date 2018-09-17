@@ -11,13 +11,10 @@ import br.ufscar.dc.antlr.LABaseVisitor;
 import br.ufscar.dc.antlr.LAParser.*;
 import br.ufscar.dc.compilador.erros.ErroSemantico;
 
-// TODO: Verificar identificadores de registro corretamente. Caso de teste: 11,
-// 12, 15, 17
-// TODO: Verificar tipos dos parametros na chama de funcao. Caso de teste: 13
 public class AnalisadorSemantico extends LABaseVisitor<String> {
     PilhaDeTabelas escopos;
     public ErroSemantico erros;
-    ArrayList listParamCriada = new ArrayList<>();
+    ArrayList<String> listParamCriada = new ArrayList<>();
 
     public AnalisadorSemantico() {
         super();
@@ -179,6 +176,22 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
      */
     @Override
     public String visitDeclaracao_global(Declaracao_globalContext ctx) {
+        // Constroi a lista de tipos dos parametros do procedimento ou funcao
+        ArrayList<String> parametros = new ArrayList<>();
+        for (ParametroContext param : ctx.parametros().parametro()) {
+            for (IdentificadorContext ident : param.identificador()) {
+                parametros.add(param.tipo_estentido().getText());
+            }
+        }
+
+        // Cria a entrada na tabela de simbolos da funcao ou procedimento
+        if (ctx.tipo_estentido() == null) {
+            escopos.topo().adicionarSimbolo(ctx.IDENT().getText(), null, "funcao", parametros, null);
+        } else {
+            escopos.topo().adicionarSimbolo(ctx.IDENT().getText(), ctx.tipo_estentido().getText(), "funcao", parametros,
+                    null);
+        }
+
         // Cria o escopo da funcao ou procedimento
         TabelaDeSimbolos escopo = new TabelaDeSimbolos(ctx.IDENT().getText());
         escopos.empilha(escopo);
@@ -205,20 +218,21 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
      */
     @Override
     public String visitParametro(ParametroContext ctx) {
+        // Tabela de simbolos do tipo correspondente
+        TabelaDeSimbolos tabelaRegistro = escopos.getEntradaPorNome(ctx.tipo_estentido().getText()).getTabelaRegistro();
+
         // Adiciona cada parametro ao escopo da funcao que deve estar no topo da
         // pilha
         if (!escopos.temSimbolo(ctx.primeiroIdentificador.getText())) {
-            listParamCriada.add(ctx.identificador.getText());
             escopos.topo().adicionarSimbolo(ctx.primeiroIdentificador.getText(), ctx.tipo_estentido().getText(),
-                    "Funcao", listParamCriada, null);
+                    "variavel", null, tabelaRegistro);
         }
 
         if (ctx.listaIdentificador != null) {
             for (IdentificadorContext identificador : ctx.listaIdentificador) {
                 if (!escopos.temSimbolo(identificador.getText())) {
-                    listParamCriada.add(ctx.identificador.getText());
-                    escopos.topo().adicionarSimbolo(identificador.getText(), ctx.tipo_estentido().getText(), "Funcao",
-                            listParamCriada, null);
+                    escopos.topo().adicionarSimbolo(identificador.getText(), ctx.tipo_estentido().getText(), "variavel",
+                            null, tabelaRegistro);
                 }
             }
         }
@@ -335,7 +349,25 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
         } else if (ctx.NUM_REAL() != null) {
             return "real";
         } else if (ctx.identificador() != null) {
-            return escopos.getTipoPorNome(ctx.identificador().primeiroIdent.getText());
+            String ident = ctx.identificador().primeiroIdent.getText();
+            for (Token tok : ctx.identificador().listaIdent) {
+                ident += ".";
+                ident += tok.getText();
+            }
+            return escopos.getTipoPorNome(ident);
+        } else if (ctx.IDENT() != null) {
+            // Lista com os tipos dos parametros sendo usados na chamada
+            ArrayList<String> parametros = new ArrayList<>();
+            for (ExpressaoContext exp : ctx.expressao()) {
+                parametros.add(escopos.getTipoPorNome(exp.getText().split("\\(|\\[")[0]));
+            }
+
+            // Verifica se os tipos dos parametros estao corretos
+            if (!escopos.getEntradaPorNome(ctx.IDENT().getText()).getListParam().equals(parametros)) {
+                erros.adicionarErro("Linha " + ctx.getStart().getLine()
+                        + ": incompatibilidade de parametros na chamada de " + ctx.IDENT().getText());
+            }
+            return escopos.getTipoPorNome(ctx.IDENT().getText());
         } else {
             return ret;
         }

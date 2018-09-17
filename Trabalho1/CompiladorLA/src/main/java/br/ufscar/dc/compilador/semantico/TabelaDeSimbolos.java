@@ -18,7 +18,7 @@ public class TabelaDeSimbolos {
         simbolos.add(new EntradaTabelaDeSimbolos(nome, tipo, tipoEntrada, listParam, tabelaRegistro));
     }
 
-    public EntradaTabelaDeSimbolos getEntradaSimbolo(String nome) {
+    public EntradaTabelaDeSimbolos getEntradaPorNome(String nome) {
         for (EntradaTabelaDeSimbolos simbolo : simbolos) {
             if (simbolo.getNome().equals(nome)) {
                 return simbolo;
@@ -36,7 +36,12 @@ public class TabelaDeSimbolos {
 
             // Recupera a entrada do registro na tabela
             // O primeiro elemento de toks e o nome da varaivel cujo tipo e registro
-            EntradaTabelaDeSimbolos varRegistro = this.getEntradaSimbolo(toks.get(0));
+            EntradaTabelaDeSimbolos varRegistro = this.getEntradaPorNome(toks.get(0));
+
+            // Nome nao esta nesta tabela
+            if (varRegistro == null) {
+                return false;
+            }
 
             if (varRegistro.getTabelaRegistro() != null) {
                 // Declarado o registro na variavel
@@ -44,7 +49,7 @@ public class TabelaDeSimbolos {
             } else {
                 // Declarado o registor como tipo
                 // Recupera a entrada do registro na tabela
-                EntradaTabelaDeSimbolos registro = this.getEntradaSimbolo(varRegistro.getTipo());
+                EntradaTabelaDeSimbolos registro = this.getEntradaPorNome(varRegistro.getTipo());
                 tabelaRegistro = registro.getTabelaRegistro();
             }
 
@@ -78,12 +83,12 @@ public class TabelaDeSimbolos {
             ArrayList<String> toks = new ArrayList<>(Arrays.asList(nome.split("\\.")));
             TabelaDeSimbolos tabelaRegistro;
 
-            EntradaTabelaDeSimbolos varRegistro = this.getEntradaSimbolo(toks.get(0));
+            EntradaTabelaDeSimbolos varRegistro = this.getEntradaPorNome(toks.get(0));
 
             if (varRegistro.getTabelaRegistro() != null) {
                 tabelaRegistro = varRegistro.getTabelaRegistro();
             } else {
-                EntradaTabelaDeSimbolos registro = this.getEntradaSimbolo(varRegistro.getTipo());
+                EntradaTabelaDeSimbolos registro = this.getEntradaPorNome(varRegistro.getTipo());
                 tabelaRegistro = registro.getTabelaRegistro();
             }
             return tabelaRegistro.getTipoPorNome(String.join(".", toks.stream().skip(1).collect(Collectors.toList())));

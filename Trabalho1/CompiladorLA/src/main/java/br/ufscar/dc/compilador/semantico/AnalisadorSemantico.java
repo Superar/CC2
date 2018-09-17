@@ -2,6 +2,9 @@ package br.ufscar.dc.compilador.semantico;
 
 import java.util.Arrays;
 import java.util.Collections;
+
+import org.antlr.v4.runtime.Token;
+
 import java.util.ArrayList;
 
 import br.ufscar.dc.antlr.LABaseVisitor;
@@ -15,7 +18,6 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
     PilhaDeTabelas escopos;
     public ErroSemantico erros;
     ArrayList listParamCriada = new ArrayList<>();
-
 
     public AnalisadorSemantico() {
         super();
@@ -57,7 +59,8 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
         if (ctx.valor_constante() != null) {
             if (!escopos.temSimbolo(ctx.IDENT().getText())) {
                 // Adiciona na tabela de simbolos do escopo
-                escopos.topo().adicionarSimbolo(ctx.IDENT().getText(), ctx.tipo_basico().getText(), "tipoBasico", null, null);
+                escopos.topo().adicionarSimbolo(ctx.IDENT().getText(), ctx.tipo_basico().getText(), "tipoBasico", null,
+                        null);
             } else {
                 erros.adicionarErro("Linha " + ctx.getStart().getLine() + ": identificador " + ctx.IDENT().getText()
                         + " ja declarado anteriormente");
@@ -67,7 +70,25 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
         // Declaracao de tipo
         if (ctx.tipo() != null) {
             if (!escopos.temTipo(ctx.IDENT().getText())) {
-                escopos.topo().adicionarSimbolo(ctx.IDENT().getText(), null, "tipo", null, null);
+                if (ctx.tipo().registro() != null) {
+                    // Declaracao de registro
+                    // Precisa criar a tabela de simbolos do registro
+                    TabelaDeSimbolos tabelaRegistro = new TabelaDeSimbolos(ctx.IDENT().getText());
+
+                    // Adiciona cada variavel na tabela do registro
+                    for (VariavelContext var : ctx.tipo().registro().variavel()) {
+                        tabelaRegistro.adicionarSimbolo(var.primeiroIdentificador.getText(), var.tipo().getText(),
+                                "variavel", null, null);
+                        for (IdentificadorContext ident : var.listaIdentificador) {
+                            tabelaRegistro.adicionarSimbolo(ident.getText(), var.tipo().getText(), "variavel", null,
+                                    null);
+                        }
+                    }
+                    escopos.topo().adicionarSimbolo(ctx.IDENT().getText(), null, "tipo", null, tabelaRegistro);
+                } else {
+                    // Declaracao de tipo estendido
+                    escopos.topo().adicionarSimbolo(ctx.IDENT().getText(), null, "tipo", null, null);
+                }
             } else {
                 erros.adicionarErro("Linha " + ctx.getStart().getLine());
             }
@@ -80,9 +101,26 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
     // identificador)* ':' tipo;
     @Override
     public String visitVariavel(VariavelContext ctx) {
+        TabelaDeSimbolos tabelaRegistro = null;
+        if (ctx.tipo().registro() != null) {
+            // Tipo e um registro
+            // Precisa criar tabela de simbolo de registro
+            tabelaRegistro = new TabelaDeSimbolos("registro");
+
+            // Adiciona cada variavel na tabela do registro
+            for (VariavelContext var : ctx.tipo().registro().variavel()) {
+                tabelaRegistro.adicionarSimbolo(var.primeiroIdentificador.getText(), var.tipo().getText(), "variavel",
+                        null, null);
+                for (IdentificadorContext ident : var.listaIdentificador) {
+                    tabelaRegistro.adicionarSimbolo(ident.getText(), var.tipo().getText(), "variavel", null, null);
+                }
+            }
+        }
+
         if (!escopos.temSimbolo(ctx.primeiroIdentificador.primeiroIdent.getText())) {
             // adiciona primeiro identificador ao escopo
-            escopos.topo().adicionarSimbolo(ctx.primeiroIdentificador.primeiroIdent.getText(), ctx.tipo().getText(), "Variavel", null, null);
+            escopos.topo().adicionarSimbolo(ctx.primeiroIdentificador.primeiroIdent.getText(), ctx.tipo().getText(),
+                    "variavel", null, tabelaRegistro);
         } else {
             erros.adicionarErro("Linha " + ctx.primeiroIdentificador.getStart().getLine() + ": identificador "
                     + ctx.primeiroIdentificador.getText() + " ja declarado anteriormente");
@@ -92,7 +130,8 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
         if (ctx.listaIdentificador != null) {
             for (IdentificadorContext identificador : ctx.listaIdentificador) {
                 if (!escopos.temSimbolo(identificador.primeiroIdent.getText())) {
-                    escopos.topo().adicionarSimbolo(identificador.primeiroIdent.getText(), ctx.tipo().getText(),  "Variavel", null, null);
+                    escopos.topo().adicionarSimbolo(identificador.primeiroIdent.getText(), ctx.tipo().getText(),
+                            "variavel", null, tabelaRegistro);
                 } else {
                     erros.adicionarErro("Linha " + identificador.getStart().getLine() + ": identificador "
                             + identificador.getText() + " ja declarado anteriormente");
@@ -170,14 +209,16 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
         // pilha
         if (!escopos.temSimbolo(ctx.primeiroIdentificador.getText())) {
             listParamCriada.add(ctx.identificador.getText());
-            escopos.topo().adicionarSimbolo(ctx.primeiroIdentificador.getText(), ctx.tipo_estentido().getText(), "Funcao", listParamCriada,null);
+            escopos.topo().adicionarSimbolo(ctx.primeiroIdentificador.getText(), ctx.tipo_estentido().getText(),
+                    "Funcao", listParamCriada, null);
         }
 
         if (ctx.listaIdentificador != null) {
             for (IdentificadorContext identificador : ctx.listaIdentificador) {
                 if (!escopos.temSimbolo(identificador.getText())) {
                     listParamCriada.add(ctx.identificador.getText());
-                    escopos.topo().adicionarSimbolo(identificador.getText(), ctx.tipo_estentido().getText(),"Funcao", listParamCriada,null);
+                    escopos.topo().adicionarSimbolo(identificador.getText(), ctx.tipo_estentido().getText(), "Funcao",
+                            listParamCriada, null);
                 }
             }
         }
@@ -207,16 +248,28 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
      */
     @Override
     public String visitCmdLeia(CmdLeiaContext ctx) {
-        if (!escopos.temSimbolo(ctx.primeiroIdentificador.primeiroIdent.getText())) {
-            erros.adicionarErro("Linha " + ctx.primeiroIdentificador.getStart().getLine() + ": identificador "
-                    + ctx.primeiroIdentificador.primeiroIdent.getText() + " nao declarado");
+        String ident = ctx.primeiroIdentificador.primeiroIdent.getText();
+        for (Token tok : ctx.primeiroIdentificador.listaIdent) {
+            ident += ".";
+            ident += tok.getText();
+        }
+
+        if (!escopos.temSimbolo(ident)) {
+            erros.adicionarErro("Linha " + ctx.primeiroIdentificador.getStart().getLine() + ": identificador " + ident
+                    + " nao declarado");
         }
 
         if (ctx.listaIdentificador != null) {
             for (IdentificadorContext identificador : ctx.listaIdentificador) {
-                if (!escopos.temSimbolo(identificador.primeiroIdent.getText())) {
-                    erros.adicionarErro("Linha " + identificador.getStart().getLine() + ": identificador "
-                            + identificador.primeiroIdent.getText() + " nao declarado");
+                ident = identificador.primeiroIdent.getText();
+                for (Token tok : identificador.listaIdent) {
+                    ident += ".";
+                    ident += tok.getText();
+                }
+
+                if (!escopos.temSimbolo(ident)) {
+                    erros.adicionarErro("Linha " + identificador.getStart().getLine() + ": identificador " + ident
+                            + " nao declarado");
                 }
             }
         }
@@ -267,7 +320,7 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
         if (ctx.identificador() != null) {
             if (!escopos.temSimbolo(ctx.identificador().primeiroIdent.getText())) {
                 erros.adicionarErro("Linha " + ctx.identificador().getStart().getLine() + ": identificador "
-                        + ctx.identificador().primeiroIdent.getText() + " nao declarado");
+                        + ctx.identificador().getText() + " nao declarado");
             }
         }
 

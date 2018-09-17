@@ -325,9 +325,16 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
         }
 
         if (tipo_ident != null) {
+            // Operacoes entre inteiros e reais devem ser pertimitas (sao numeros)
+
             tipo_ident = tipo_ident.replace("^inteiro", "ponteiro");
             tipo_ident = tipo_ident.replace("inteiro", "num");
             tipo_ident = tipo_ident.replace("real", "num");
+
+            if (tipo_exp != null) {
+                tipo_exp = tipo_exp.replace("inteiro", "num");
+                tipo_exp = tipo_exp.replace("real", "num");
+            }
 
             // Se existe mais de um tipo na atribuicao, a operacao nao e compativel
             if (!tipo_ident.equals(tipo_exp)) {
@@ -378,12 +385,18 @@ public class AnalisadorSemantico extends LABaseVisitor<String> {
             ArrayList<String> parametros = new ArrayList<>();
             for (ExpressaoContext exp : ctx.expressao()) {
                 IdentificadorDeTipos idt = new IdentificadorDeTipos(escopos);
-                // System.out.println(idt.identificaTipoExpressao(exp));
-                parametros.add(escopos.getTipoPorNome(exp.getText().split("\\(|\\[")[0]));
+                parametros.add(idt.identificaTipoExpressao(exp));
             }
 
+            ArrayList<String> parametrosEsperados = escopos.getEntradaPorNome(ctx.IDENT().getText()).getListParam();
+            // Substitui valores para compatibilidade com os tipos identificados nas
+            // expressoes
+            // Collections.replaceAll(parametrosEsperados, "inteiro", "num");
+            // Collections.replaceAll(parametrosEsperados, "real", "num");
+            Collections.replaceAll(parametrosEsperados, "^inteiro", "ponteiro");
+
             // Verifica se os tipos dos parametros estao corretos
-            if (!escopos.getEntradaPorNome(ctx.IDENT().getText()).getListParam().equals(parametros)) {
+            if (!parametrosEsperados.equals(parametros)) {
                 erros.adicionarErro("Linha " + ctx.getStart().getLine()
                         + ": incompatibilidade de parametros na chamada de " + ctx.IDENT().getText());
             }

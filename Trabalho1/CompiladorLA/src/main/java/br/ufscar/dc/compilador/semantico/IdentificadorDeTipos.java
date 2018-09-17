@@ -3,7 +3,9 @@ package br.ufscar.dc.compilador.semantico;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.antlr.v4.runtime.Token;
 
@@ -27,14 +29,17 @@ public class IdentificadorDeTipos extends LABaseVisitor<String> {
         ArrayList<String> tipos = new ArrayList<>(Arrays.asList(ret.split(",")));
 
         // Substitui valores
-        // Operacoes entre inteiros e reais devem ser permitidas (sao numeros)
-        Collections.replaceAll(tipos, "inteiro", "num");
-        Collections.replaceAll(tipos, "real", "num");
         // Ponteiros devem receber enderecos
         Collections.replaceAll(tipos, "^inteiro", "ponteiro");
 
         if (tipos.stream().distinct().limit(2).count() > 1) {
+            List<String> listaTiposDistintos = tipos.stream().distinct().limit(2).sorted().collect(Collectors.toList());
             // Mais de um tipo
+            if (listaTiposDistintos.equals(new ArrayList<>(Arrays.asList("inteiro", "real")))) {
+                // Os dois valores sao inteiro e real
+                // A expressao e real
+                return "real";
+            }
             return null;
         } else {
             ctx.tipoVar = ret.split(",")[0];

@@ -50,3 +50,4 @@ nbactions.xml
 .classpath
 .project
 settings.json
+launch.json

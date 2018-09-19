@@ -72,7 +72,9 @@ public class Compilador {
                 System.out.println("Fim da compilacao");
             }
         } else { // Nenhum ou mais de dois parametros foram fornecidos
-            System.out.println("Erro");
+            System.out.println("Parametros esperados:");
+            System.out.println("Arquivo a ser compilado (obrigatorio)");
+            System.out.println("Arquivo de saida (opcional)");
         }
     }
 }

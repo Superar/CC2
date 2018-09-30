@@ -31,6 +31,7 @@ temp/
 **/src/main/antlr4/.antlr/
 **/src/main/java/br/ufscar/dc/antlr/*.java
 **/src/main/java/br/ufscar/dc/antlr/*.tokens
+.antlr/
 
 # Arquivos gerados pelo Maven
 **/target/

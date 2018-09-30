@@ -1,0 +1,52 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage{longtable}
+\usepackage{colortbl}%
+\newcommand{\myrowcolour}{\rowcolor[gray]{0.925}}
+\usepackage{booktabs}
+\usepackage{pgfgantt}
+
+\begin{document}
+
+\begin{longtable}{p{0.97\textwidth}}
+	\toprule                          %
+	\myrowcolour                      %
+	\bfseries Atividade 1: Atividade1 \\
+	\midrule
+	Fruffles
+	\\
+
+	\midrule
+	\myrowcolour                      %
+	\bfseries Atividade 2: Atividade2 \\
+	\midrule
+	Fruffles 2
+	\\
+
+	\midrule
+	\myrowcolour                      %
+	\bfseries Atividade 3: Atividade3 \\
+	\midrule
+	Fruffles 3
+	\\
+
+	\bottomrule
+\end{longtable}
+
+\begin{center}
+	\begin{ganttchart}[
+			hgrid,
+			vgrid,
+			time slot format=little-endian,
+			inline,
+			bar/.append style={fill=gray!30, inner sep=0pt}
+		]{23/09/2018}{30/09/2018}
+		\gantttitlecalendar{year, month=shortname, day} \\
+
+		\ganttbar{Atividade1}{23/09/2018}{30/09/2018} \\
+		\ganttbar{Atividade2}{23/09/2018}{30/09/2018} \\
+		\ganttmilestone{Atividade3}{23/09/2018}
+	\end{ganttchart}
+\end{center}
+
+\end{document}

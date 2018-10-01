@@ -23,5 +23,11 @@ Cronograma FrufflesExemplo {
             Inicio: 23/09/2018,
             Fim: 23/09/2018
         }
+    },
+    Configuracao {
+        Linhas horizontais,
+        Linhas verticais,
+        Cor: (0, 225, 0),
+        Altura da barra: 0.5
     }
 }

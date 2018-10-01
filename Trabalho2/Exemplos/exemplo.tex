@@ -6,6 +6,8 @@
 \usepackage{booktabs}
 \usepackage{pgfgantt}
 
+\definecolor{corBarra}{RGB}{0,255,0}
+
 \begin{document}
 
 \begin{longtable}{p{0.97\textwidth}}
@@ -39,7 +41,8 @@
 			vgrid,
 			time slot format=little-endian,
 			inline,
-			bar/.append style={fill=gray!30, inner sep=0pt}
+			bar/.append style={fill=corBarra, inner sep=0pt},
+			bar height=0.5
 		]{23/09/2018}{30/09/2018}
 		\gantttitlecalendar{year, month=shortname, day} \\
 

@@ -4,8 +4,12 @@
     \usepackage{colortbl}%
     \newcommand{\myrowcolour}{\rowcolor[gray]{0.925}}
     \usepackage{booktabs}
-    \usepackage{pgfgantt}
-    \usepackage[utf8]{inputenc}
+	\usepackage{pgfgantt}
+	\usepackage{pdflscape}
+	\usepackage[utf8]{inputenc}
+	\usepackage[margin=.25in]{geometry}
+	
+	\pagenumbering{gobble}
     
     \definecolor{corAtividade1}{RGB}{0, 0, 255}
     \definecolor{corAtividade2}{RGB}{255, 0, 0}
@@ -37,20 +41,24 @@
 	\bottomrule
 \end{longtable}
 
-\begin{center}
-	\begin{ganttchart}[
-			hgrid,
-			vgrid,
-			time slot format=little-endian,
-			inline,
-			compress calendar
-		]{01.01.2016}{31.05.2016}
-		\gantttitlecalendar{year, month} \\
-		\ganttbar[bar/.append style={fill=corAtividade1, inner sep=0pt}]{Atividade1}{01.02.2016}{31.03.2016} \\
-		\ganttbar[bar/.append style={fill=corAtividade2, inner sep=0pt}]{Atividade2}{01.01.2016}{31.05.2016} \\
-		\ganttbar{Atividade3}{01.01.2016}{30.04.2016}
-		\ganttlink{elem0}{elem1}
-	\end{ganttchart}
-\end{center}
+\newpage
+
+\begin{landscape}
+	\begin{center}
+		\begin{ganttchart}[
+				hgrid,
+				vgrid,
+				time slot format=little-endian,
+				inline,
+				compress calendar
+			]{01.01.2016}{31.05.2016}
+			\gantttitlecalendar{year, month} \\
+			\ganttbar[bar/.append style={fill=corAtividade1, inner sep=0pt}]{Atividade1}{01.02.2016}{31.03.2016} \\
+			\ganttbar[bar/.append style={fill=corAtividade2, inner sep=0pt}]{Atividade2}{01.01.2016}{31.05.2016} \\
+			\ganttbar{Atividade3}{01.01.2016}{30.04.2016}
+			\ganttlink{elem0}{elem1}
+		\end{ganttchart}
+	\end{center}
+\end{landscape}
 
 \end{document}

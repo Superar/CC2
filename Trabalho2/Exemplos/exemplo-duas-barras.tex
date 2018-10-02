@@ -5,6 +5,11 @@
 \newcommand{\myrowcolour}{\rowcolor[gray]{0.925}}
 \usepackage{booktabs}
 \usepackage{pgfgantt}
+\usepackage{pdflscape}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=.25in]{geometry}
+
+\pagenumbering{gobble}
 
 \definecolor{corBarra}{RGB}{0,255,0}
 
@@ -35,22 +40,26 @@
 	\bottomrule
 \end{longtable}
 
-\begin{center}
-	\begin{ganttchart}[
-			hgrid,
-			vgrid,
-			time slot format=little-endian,
-			inline,
-			bar/.append style={fill=corBarra, inner sep=0pt},
-			bar height=0.5
-		]{23/09/2018}{08/10/2018}
-		\gantttitlecalendar{year, month, day} \\
+\newpage
 
-		\ganttbar{Atividade1}{23/09/2018}{30/09/2018}
-		\ganttbar{Atividade1}{05/10/2018}{08/10/2018} \\
-		\ganttbar{Atividade2}{23/09/2018}{30/09/2018} \\
-		\ganttmilestone{Atividade3}{23/09/2018}
-	\end{ganttchart}
-\end{center}
+\begin{landscape}
+	\begin{center}
+		\begin{ganttchart}[
+				hgrid,
+				vgrid,
+				time slot format=little-endian,
+				inline,
+				bar/.append style={fill=corBarra, inner sep=0pt},
+				bar height=0.5
+			]{23/09/2018}{08/10/2018}
+			\gantttitlecalendar{year, month, day} \\
+
+			\ganttbar{Atividade1}{23/09/2018}{30/09/2018}
+			\ganttbar{Atividade1}{05/10/2018}{08/10/2018} \\
+			\ganttbar{Atividade2}{23/09/2018}{30/09/2018} \\
+			\ganttmilestone{Atividade3}{23/09/2018}
+		\end{ganttchart}
+	\end{center}
+\end{landscape}
 
 \end{document}

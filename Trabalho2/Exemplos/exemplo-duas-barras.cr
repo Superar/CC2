@@ -4,6 +4,7 @@ Cronograma FrufflesExemplo {
             "Fruffles",
             Datas {
                 23/09/2018 - 30/09/2018
+                05/10/2018 - 08/10/2018
             }
         },
         Atividade Atividade2 {

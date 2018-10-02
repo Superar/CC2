@@ -3,27 +3,30 @@ grammar chronological;
 cronogramas: (cronograma)+;
 
 cronograma:
-	'Cronograma' IDENT '{' (atividades)* ',' (datas)* (
-		',' configuracao
-	)? '}';
+	'Cronograma' IDENT '{' (atividades)* (configuracao)? '}';
 
 atividades: 'Atividades' '{' atividade (',' atividade)* '}';
 
-datas: 'Datas' '{' atividade (',' atividade)* '}';
-
-atividade: 'Atividade' IDENT '{' (descricao | data) '}';
+atividade: 'Atividade' IDENT '{' (descricao ',' datas) '}';
 
 descricao: TEXTO;
 
-data: 'Inicio:' DATA ',' 'Fim:' DATA;
+datas: 'Datas' '{' (periodo)+ '}';
+
+periodo: DATA '-' DATA;
 
 configuracao: 'Configuracao' '{' configs (',' configs)* '}';
 
-configs: 'Linhas horizontais' | 'Linhas verticais' | cor | altura_barra;
+configs:
+	'Linhas horizontais'
+	| 'Linhas verticais'
+	| cor
+	| altura_barra;
 
 cor: 'Cor: ' (cor_rgb | cor_hex);
 
-cor_rgb: '(' NUMERO_INTEIRO ',' NUMERO_INTEIRO ',' NUMERO_INTEIRO ')';
+cor_rgb:
+	'(' NUMERO_INTEIRO ',' NUMERO_INTEIRO ',' NUMERO_INTEIRO ')';
 
 cor_hex: NUMERO_HEX;
 

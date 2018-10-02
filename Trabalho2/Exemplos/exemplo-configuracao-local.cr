@@ -26,6 +26,7 @@ Cronograma FrufflesExemplo {
     Configuracao {
         Linhas horizontais,
         Linhas verticais,
+        Mostrar dias,
         Cor: (0, 225, 0),
         Altura da barra: 0.5
     }

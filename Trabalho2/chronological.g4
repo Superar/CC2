@@ -18,7 +18,7 @@ atividades: 'Atividades' '{' atividade (',' atividade)* '}';
 // configuracoes locais que serao aplicadas apenas as barras daquela atividade
 atividade:
 	'Atividade' IDENT '{' (
-		descricao ',' datas (',' configuracao)?
+		descricao ',' datas (',' configuracao)? (',' dependencias)?
 	) '}';
 
 // A descricao de uma atividade e um texto delimitado por aspas duplas
@@ -40,7 +40,8 @@ configs:
 	| 'Linhas verticais'
 	| cor
 	| altura_barra
-	| 'Formato: ' DATA_FORMATO;
+	| 'Formato: ' DATA_FORMATO
+	| 'Mostrar dias';
 
 // Cor pode ser implementada como RGB ou como formato hexadecial
 cor: 'Cor: ' (cor_rgb | cor_hex);
@@ -51,6 +52,8 @@ cor_rgb:
 cor_hex: NUMERO_HEX;
 
 altura_barra: 'Altura da barra: ' NUMERO_REAL;
+
+dependencias: 'Depende' '{' (IDENT)+ '}';
 
 /*-------------------- Regras léxicas --------------------*/
 

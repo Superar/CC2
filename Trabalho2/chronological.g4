@@ -7,7 +7,7 @@ cronograma:
 
 atividades: 'Atividades' '{' atividade (',' atividade)* '}';
 
-atividade: 'Atividade' IDENT '{' (descricao ',' datas) '}';
+atividade: 'Atividade' IDENT '{' (descricao ',' datas (',' configuracao)?) '}';
 
 descricao: TEXTO;
 
@@ -44,7 +44,7 @@ DATA: DIGITO+ '/' DIGITO+ '/' DIGITO+;
 
 NUMERO_INTEIRO: (DIGITO)+;
 
-NUMERO_HEX: (DIGITO_HEX)+;
+NUMERO_HEX: '0x'(DIGITO_HEX)+;
 
 NUMERO_REAL: (DIGITO)+ '.' (DIGITO)+;
 

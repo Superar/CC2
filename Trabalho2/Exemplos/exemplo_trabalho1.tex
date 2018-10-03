@@ -1,0 +1,87 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage{longtable}
+\usepackage{colortbl}
+\newcommand{\myrowcolour}{\rowcolor[gray]{0.925}}
+\usepackage{booktabs}
+\usepackage{pgfgantt}
+\usepackage{pdflscape}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=.25in]{geometry}
+
+\pagenumbering{gobble}
+
+\begin{document}
+
+\begin{longtable}{p{0.97\textwidth}}
+	\toprule
+	\myrowcolour
+	\bfseries Atividade 1: EscreverGramatica                                                                 \\
+	\midrule
+	Escrever a gramática de acordo com as especificações no documento PDF disponibilizado pelo professor.
+	\\
+
+	\midrule
+	\myrowcolour
+	\bfseries Atividade 2: TratarErrosLexicos                                                                \\
+	\midrule
+	Fazer o tratamento dos erros léxicos de acordo com os exemplos disponibilizados pelo professor.
+	\\
+
+	\midrule
+	\myrowcolour
+	\bfseries Atividade 3: TratarErrosSintaticos                                                             \\
+	\midrule
+	Fazer o tratamento dos erros sintáticos de acordo com os exemplos disponibilizados pelo professor.
+	\\
+
+	\midrule
+	\myrowcolour
+	\bfseries Atividade 4: TratarErrosSemanticos                                                             \\
+	\midrule
+	Fazer o tratamento de erros semânticos de acordo com os exemplos disponibilizados pelo professor.
+	\\
+
+	\midrule
+	\myrowcolour
+	\bfseries Atividade 5: GeracaoDeCodigo                                                                   \\
+	\midrule
+	Implementar a geração de código em C a partir de uma entrada em LA.
+    \\
+    
+    \midrule
+	\myrowcolour
+	\bfseries Atividade 6: Documentacao                                                                   \\
+	\midrule
+    Revisar o código, comentar trechos importantes e descrever o processo de compilação e execução do compilador em um arquivo README. O projeto do compilador juntamente com os documentos gerados devem ser
+	enviados via AVA.
+    \\
+
+	\bottomrule
+\end{longtable}
+
+\newpage
+
+\begin{landscape}
+	\begin{center}
+		\begin{ganttchart}[
+				vgrid,
+				time slot format=little-endian
+			]{09/08/2018}{19/09/2018}
+			\gantttitlecalendar{year, month, day} \\
+
+            \ganttmilestone{Atividade 1}{09/08/2018} \\
+			\ganttbar{Atividade 2}{13/08/2018}{15/08/2018} \\
+            \ganttbar{Atividade 3}{13/08/2018}{15/08/2018} \\
+            \ganttbar{Atividade 4}{16/08/2018}{02/09/2018} \\
+            \ganttbar{Atividade 5}{07/09/2018}{17/09/2018} \\
+			\ganttmilestone{Atividade 6}{19/09/2018}
+			\ganttlink{elem0}{elem1}
+			\ganttlink{elem1}{elem2}
+			\ganttlink{elem2}{elem3}
+			\ganttlink{elem3}{elem4}
+		\end{ganttchart}
+	\end{center}
+\end{landscape}
+
+\end{document}

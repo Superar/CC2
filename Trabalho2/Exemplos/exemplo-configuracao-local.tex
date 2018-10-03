@@ -19,23 +19,23 @@
 \begin{longtable}{p{0.97\textwidth}}
 	\toprule                          %
 	\myrowcolour                      %
-	\bfseries Atividade 1: Atividade1 \\
+	\bfseries Atividade 1: NomeDaAtividade1 \\
 	\midrule
-	Fruffles
+	Descrição da atividade 1
 	\\
 
 	\midrule
 	\myrowcolour                      %
-	\bfseries Atividade 2: Atividade2 \\
+	\bfseries Atividade 2: NomeDaAtividade2 \\
 	\midrule
-	Fruffles 2
+	Descrição da atividade 2
 	\\
 
 	\midrule
 	\myrowcolour                      %
-	\bfseries Atividade 3: Atividade3 \\
+	\bfseries Atividade 3: NomeDaAtividade3 \\
 	\midrule
-	Fruffles 3
+	Descrição da atividade 3
 	\\
 
 	\bottomrule
@@ -49,16 +49,16 @@
 				hgrid,
 				vgrid,
 				time slot format=little-endian,
-				inline,
 				bar/.append style={fill=corBarra, inner sep=0pt},
 				bar height=0.5
 			]{23/09/2018}{08/10/2018}
 			\gantttitlecalendar{year, month, day} \\
 
-			\ganttbar{Atividade1}{23/09/2018}{30/09/2018}
-			\ganttbar{Atividade1}{05/10/2018}{08/10/2018} \\
-			\ganttbar[bar/.append style={fill=corAtividade2, inner sep=0pt}]{Atividade2}{23/09/2018}{30/09/2018} \\
-			\ganttmilestone{Atividade3}{23/09/2018}
+			\ganttbar{Atividade 1}{23/09/2018}{30/09/2018}
+			\ganttbar{Atividade 1}{05/10/2018}{08/10/2018} \\
+			\ganttbar[bar/.append style={fill=corAtividade2, inner sep=0pt}]{Atividade 2}{23/09/2018}{30/09/2018} \\
+			\ganttmilestone{Atividade 3}{03/10/2018}
+			\ganttlink{elem2}{elem3}
 		\end{ganttchart}
 	\end{center}
 \end{landscape}

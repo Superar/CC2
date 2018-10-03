@@ -1,14 +1,14 @@
-Cronograma FrufflesExemplo {
+Cronograma ExemploConfiguracaoLocal {
     Atividades {
-        Atividade Atividade1 {
-            "Fruffles",
+        Atividade NomeDaAtividade1 {
+            "Descrição da atividade 1",
             Datas {
                 23/09/2018 - 30/09/2018
                 05/10/2018 - 08/10/2018
             }
         },
-        Atividade Atividade2 {
-            "Fruffles 2",
+        Atividade NomeDaAtividade2 {
+            "Descrição da atividade 2",
             Datas {
                 23/09/2018 - 30/09/2018
             },
@@ -16,10 +16,13 @@ Cronograma FrufflesExemplo {
                 Cor: 0xA3B1FF
             }
         },
-        Atividade Atividade3 {
-            "Fruffles 3",
+        Atividade NomeDaAtividade3 {
+            "Descrição da atividade 3",
             Datas {
-                23/09/2018 - 23/09/2018
+                03/10/2018 - 03/10/2018
+            },
+            Depende {
+                NomeDaAtividade2
             }
         }
     }

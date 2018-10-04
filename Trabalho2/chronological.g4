@@ -64,7 +64,7 @@ fragment DIA: 'dd';
 fragment MES: 'mm';
 fragment ANO: 'yyyy';
 // Separadores das datas podem ser: / - ou .
-fragment SEPARADORES_DATA: [/\\\-.];
+fragment SEPARADORES_DATA: [/\-.];
 
 // Identificadores iniciam com letra ou underscore
 IDENT: (LETRA | '_') (LETRA | DIGITO | '_')*;

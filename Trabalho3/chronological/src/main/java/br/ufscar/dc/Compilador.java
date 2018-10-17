@@ -2,15 +2,17 @@ package br.ufscar.dc;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import br.ufscar.dc.antlr.*;
-import br.ufscar.dc.compilador.erros.ErrorListener;
+import br.ufscar.dc.compilador.erros.*;
 
 public final class Compilador {
+    static PrintStream origout;
+    static PrintStream fileout;
+
     private Compilador() {
     }
 
@@ -19,8 +21,8 @@ public final class Compilador {
         // Se segundo parâmetro for passado, redireciona saída para o arquivo
         if (args.length == 2) {
             try {
-                final PrintStream origout = System.out;
-                final PrintStream fileout = new PrintStream(args[1]);
+                origout = System.out;
+                fileout = new PrintStream(args[1]);
                 System.setOut(new PrintStream(new OutputStream() {
                     @Override
                     public void write(int i) throws IOException {
@@ -57,6 +59,13 @@ public final class Compilador {
             } catch (ParseCancellationException ex) { // Erro de compilacao lexico ou sintatico
                 System.out.println(ex.getMessage());
                 System.out.println("Fim da compilacao");
+            }
+
+            // Retorna o comportamento natural de System.out
+            if (args.length == 2) {
+                System.out.close();
+                fileout.close();
+                System.setOut(origout);
             }
         } else { // Nenhum ou mais de dois parametros foram fornecidos
             System.out.println("Parametros esperados:");

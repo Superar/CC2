@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import br.ufscar.dc.antlr.*;
+import br.ufscar.dc.compilador.erros.ErrorListener;
 
 public final class Compilador {
     private Compilador() {
@@ -40,11 +41,16 @@ public final class Compilador {
 
                 // Analise lexica
                 ChronologicalLexer lexer = new ChronologicalLexer(input);
+                lexer.removeErrorListeners();
+                lexer.addErrorListener(ErrorListener.INSTANCE);
 
                 CommonTokenStream tokens = new CommonTokenStream(lexer);
 
                 // Analise sintatica
                 ChronologicalParser parser = new ChronologicalParser(tokens);
+                parser.removeErrorListeners();
+                parser.addErrorListener(ErrorListener.INSTANCE);
+
                 ChronologicalParser.CronogramasContext arvore = parser.cronogramas();
             } catch (IOException ex) {
                 Logger.getLogger(Compilador.class.getName()).log(Level.SEVERE, null, ex);

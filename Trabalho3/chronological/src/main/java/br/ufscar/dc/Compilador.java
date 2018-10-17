@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import br.ufscar.dc.antlr.*;
 import br.ufscar.dc.compilador.erros.*;
+import br.ufscar.dc.compilador.semantico.VisitorPreencherTabelas;
 
 public final class Compilador {
     static PrintStream origout;
@@ -54,6 +55,16 @@ public final class Compilador {
                 parser.addErrorListener(ErrorListener.getInstance());
 
                 ChronologicalParser.CronogramasContext arvore = parser.cronogramas();
+
+                // Analise semantica
+                VisitorPreencherTabelas preencherTabelas = new VisitorPreencherTabelas();
+                preencherTabelas.visitCronogramas(arvore);
+
+                if (ErroSemantico.getInstance().temErros()) {
+                    throw new ParseCancellationException(ErroSemantico.getInstance().toString());
+                }
+
+                System.out.println(preencherTabelas.tabelas);
             } catch (IOException ex) {
                 Logger.getLogger(Compilador.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ParseCancellationException ex) { // Erro de compilacao lexico ou sintatico

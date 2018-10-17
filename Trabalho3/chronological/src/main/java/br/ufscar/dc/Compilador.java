@@ -44,14 +44,14 @@ public final class Compilador {
                 // Analise lexica
                 ChronologicalLexer lexer = new ChronologicalLexer(input);
                 lexer.removeErrorListeners();
-                lexer.addErrorListener(ErrorListener.INSTANCE);
+                lexer.addErrorListener(ErrorListener.getInstance());
 
                 CommonTokenStream tokens = new CommonTokenStream(lexer);
 
                 // Analise sintatica
                 ChronologicalParser parser = new ChronologicalParser(tokens);
                 parser.removeErrorListeners();
-                parser.addErrorListener(ErrorListener.INSTANCE);
+                parser.addErrorListener(ErrorListener.getInstance());
 
                 ChronologicalParser.CronogramasContext arvore = parser.cronogramas();
             } catch (IOException ex) {

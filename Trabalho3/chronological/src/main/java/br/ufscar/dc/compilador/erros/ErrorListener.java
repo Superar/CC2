@@ -6,8 +6,8 @@ import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
-public class ErrorListener extends BaseErrorListener {
-    public static final ErrorListener INSTANCE = new ErrorListener();
+public final class ErrorListener extends BaseErrorListener {
+    private static final ErrorListener INSTANCE = new ErrorListener();
 
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine,
@@ -22,5 +22,9 @@ public class ErrorListener extends BaseErrorListener {
             Token tok = (Token) offendingSymbol;
             throw new ParseCancellationException("Linha " + line + ": erro sintatico proximo a " + tok.getText());
         }
+    }
+
+    public static ErrorListener getInstance() {
+        return INSTANCE;
     }
 }

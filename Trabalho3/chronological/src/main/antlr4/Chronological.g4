@@ -20,7 +20,9 @@ atividades: 'Atividades' '{' atividade (',' atividade)* '}';
 // configuracoes locais que serao aplicadas apenas as barras daquela atividade
 atividade:
 	'Atividade' IDENT '{' (
-		descricao ',' datas (',' configuracao)? (',' dependencias)?
+		descricao ',' datas (',' configuracao)? (
+			',' dependencias
+		)?
 	) '}';
 
 // A descricao de uma atividade e um texto delimitado por aspas duplas
@@ -74,7 +76,9 @@ IDENT: (LETRA | '_') (LETRA | DIGITO | '_')*;
 // Textos sao delimitados por aspas duplas
 TEXTO: '"' ~('"')* '"';
 
-DATA: DIGITO+ SEPARADORES_DATA DIGITO+ SEPARADORES_DATA DIGITO+;
+DATA:
+	DIGITO DIGITO SEPARADORES_DATA DIGITO DIGITO SEPARADORES_DATA DIGITO DIGITO DIGITO DIGITO
+	| DIGITO DIGITO DIGITO DIGITO SEPARADORES_DATA DIGITO DIGITO SEPARADORES_DATA DIGITO DIGITO;
 
 // Tres tipos de data sao identificados
 DATA_FORMATO:

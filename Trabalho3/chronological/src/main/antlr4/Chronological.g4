@@ -36,7 +36,10 @@ periodo: DATA '-' DATA;
 
 // As configuracoes sao separadas por virgula e deve ser necessaria a presenca de pelo menos uma
 // configuracao
-configuracao: 'Configuracao' '{' configs (',' configs)* '}';
+configuracao:
+	'Configuracao' '{' config1 = configs (
+		',' listaConfig += configs
+	)* '}';
 
 // Configuracoes disponiveis
 configs:

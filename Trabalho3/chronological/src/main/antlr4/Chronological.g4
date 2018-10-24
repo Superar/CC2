@@ -32,7 +32,7 @@ descricao: TEXTO;
 datas: 'Datas' '{' (periodo)+ '}';
 
 // Um periodo possui a indicacao de inicio e fim da atividade
-periodo: DATA '-' DATA;
+periodo: dataInicio = DATA '-' dataFinal = DATA;
 
 // As configuracoes sao separadas por virgula e deve ser necessaria a presenca de pelo menos uma
 // configuracao
@@ -47,7 +47,7 @@ configs:
 	| 'Linhas verticais'
 	| cor
 	| altura_barra
-	| 'Formato: ' DATA_FORMATO
+	| 'Formato: ' data_formato
 	| 'Mostrar dias';
 
 // Cor pode ser implementada como RGB ou como formato hexadecial
@@ -62,16 +62,14 @@ altura_barra: 'Altura da barra: ' NUMERO_REAL;
 
 dependencias: 'Depende' '{' (IDENT)+ '}';
 
+// Tres tipos de data sao identificados
+data_formato: LITTLE_ENDIAN | MID_ENDIAN | BIG_ENDIAN;
+
 /*-------------------- Regras léxicas --------------------*/
 
 fragment LETRA: [a-zA-Z];
 fragment DIGITO: [0-9];
 fragment DIGITO_HEX: [0-9a-fA-F];
-fragment DIA: 'dd';
-fragment MES: 'mm';
-fragment ANO: 'yyyy';
-// Separadores das datas podem ser: / - ou .
-fragment SEPARADORES_DATA: [/\-.];
 
 // Identificadores iniciam com letra ou underscore
 IDENT: (LETRA | '_') (LETRA | DIGITO | '_')*;
@@ -79,22 +77,32 @@ IDENT: (LETRA | '_') (LETRA | DIGITO | '_')*;
 // Textos sao delimitados por aspas duplas
 TEXTO: '"' ~('"')* '"';
 
+fragment DIA_MES: DIGITO DIGITO;
+fragment ANO: DIGITO DIGITO DIGITO DIGITO;
+
 DATA:
-	DIGITO DIGITO SEPARADORES_DATA DIGITO DIGITO SEPARADORES_DATA DIGITO DIGITO DIGITO DIGITO
-	| DIGITO DIGITO DIGITO DIGITO SEPARADORES_DATA DIGITO DIGITO SEPARADORES_DATA DIGITO DIGITO;
-
-// Tres tipos de data sao identificados
-DATA_FORMATO:
-	DIA SEPARADORES_DATA MES SEPARADORES_DATA ANO // little-endian (dd-mm-yyyy)
-	| MES SEPARADORES_DATA DIA SEPARADORES_DATA ANO // middle-endian (mm-dd-yyyy)
-	| ANO SEPARADORES_DATA MES SEPARADORES_DATA DIA; // big-endian (yyyy-mm-dd)
-
-NUMERO_INTEIRO: (DIGITO)+;
+	DIA_MES SEPARADORES_DATA DIA_MES SEPARADORES_DATA ANO // little/mid-endian
+	| ANO SEPARADORES_DATA DIA_MES SEPARADORES_DATA DIA_MES; // big-endian
 
 // Numero hexadecimal deve comecar com 0x para diferenciar de identificadores ou outros numeros
 NUMERO_HEX: '0x' (DIGITO_HEX)+;
-
+NUMERO_INTEIRO: (DIGITO)+;
 NUMERO_REAL: (DIGITO)+ ('.' (DIGITO)+)?;
+
+// Configuracao de datas
+fragment DIA_CONFIG: 'dd';
+fragment MES_CONFIG: 'mm';
+fragment ANO_CONFIG: 'yyyy';
+// Separadores das datas podem ser: / - ou .
+SEPARADORES_DATA: [/\-.];
+
+// Formatos de data
+LITTLE_ENDIAN:
+	DIA_CONFIG sep1 = SEPARADORES_DATA MES_CONFIG sep2 = SEPARADORES_DATA ANO_CONFIG; // dd-mm-yyyy
+MID_ENDIAN:
+	MES_CONFIG sep1 = SEPARADORES_DATA DIA_CONFIG sep2 = SEPARADORES_DATA ANO_CONFIG; // mm-dd-yyyy
+BIG_ENDIAN:
+	ANO_CONFIG sep1 = SEPARADORES_DATA MES_CONFIG sep2 = SEPARADORES_DATA DIA_CONFIG; // yyyy-mm-dd
 
 // Ignora espacos em branco
 WS: (' ' | '\t' | '\r' | '\n') {skip();} -> skip;

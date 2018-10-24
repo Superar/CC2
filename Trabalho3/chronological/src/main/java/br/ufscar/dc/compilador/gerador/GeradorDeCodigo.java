@@ -4,6 +4,7 @@ import br.ufscar.dc.antlr.ChronologicalBaseListener;
 import br.ufscar.dc.antlr.ChronologicalParser.AtividadeContext;
 import br.ufscar.dc.antlr.ChronologicalParser.CronogramaContext;
 import br.ufscar.dc.antlr.ChronologicalParser.CronogramasContext;
+import br.ufscar.dc.compilador.utils.*;
 
 public class GeradorDeCodigo extends ChronologicalBaseListener {
     private String CodigoGerado;
@@ -82,7 +83,9 @@ public class GeradorDeCodigo extends ChronologicalBaseListener {
         curAtividade++;
 
         // Configuracoes locais da atividade
-        Configuracoes configuracoesAtividade = new Configuracoes(ctx.configuracao());
+        if (ctx.configuracao() != null) {
+            Configuracoes configuracoesAtividade = new Configuracoes(ctx.configuracao());
+        }
 
         // A primeira atividade nao possui midrule, possui toprule
         // (adicionada em enterCronograma)

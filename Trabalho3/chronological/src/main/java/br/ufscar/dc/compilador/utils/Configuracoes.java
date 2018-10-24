@@ -16,7 +16,7 @@ public class Configuracoes {
     public double alturaBarra;
     public boolean mostrarDias;
 
-    private SimpleDateFormat dataFormater;
+    public SimpleDateFormat dataFormater;
 
     public Configuracoes(ConfiguracaoContext ctx) {
         // Valores padrao
@@ -51,33 +51,6 @@ public class Configuracoes {
             dataFormater = new SimpleDateFormat(ctx.data_formato().getText().replace("m", "M"));
         } else if (ctx.getText().equals("Mostrar dias")) {
             mostrarDias = true;
-        }
-    }
-
-    public boolean dataValida(String data) {
-        try {
-            dataFormater.parse(data);
-        } catch (ParseException e) {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean periodoValido(String dataInicial, String dataFinal) {
-        Date data1, data2;
-        try {
-            data1 = dataFormater.parse(dataInicial);
-            data2 = dataFormater.parse(dataFinal);
-        } catch (ParseException e) {
-            // Retorna true, pois o erro das datas invalidas ja sera acusado
-            // pelo metodo dataValida
-            return true;
-        }
-
-        if (data1.before(data2) || data1.equals(data2)) {
-            return true;
-        } else {
-            return false;
         }
     }
 }

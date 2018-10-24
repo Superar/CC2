@@ -1,6 +1,8 @@
 package br.ufscar.dc.compilador.semantico;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import br.ufscar.dc.antlr.ChronologicalBaseVisitor;
 import br.ufscar.dc.antlr.ChronologicalParser.*;
@@ -38,18 +40,45 @@ public class AnalisadorSemantico extends ChronologicalBaseVisitor<Void> {
 
     @Override
     public Void visitPeriodo(PeriodoContext ctx) {
-        if (!configuracaoCurCronograma.dataValida(ctx.dataInicio.getText())) {
+        if (!dataValida(ctx.dataInicio.getText())) {
             erros.adicionarErro("Linha " + ctx.getStart().getLine() + ": Data " + ctx.dataInicio.getText()
                     + " nao esta conforme o padrao " + configuracaoCurCronograma.formatoData);
         }
-        if (!configuracaoCurCronograma.dataValida(ctx.dataFinal.getText())) {
+        if (!dataValida(ctx.dataFinal.getText())) {
             erros.adicionarErro("Linha " + ctx.getStart().getLine() + ": Data " + ctx.dataFinal.getText()
                     + " nao esta conforme o padrao " + configuracaoCurCronograma.formatoData);
         }
 
-        if (!configuracaoCurCronograma.periodoValido(ctx.dataInicio.getText(), ctx.dataFinal.getText())) {
+        if (!periodoValido(ctx.dataInicio.getText(), ctx.dataFinal.getText())) {
             erros.adicionarErro("Linha " + ctx.getStart().getLine() + ": Periodo invalido");
         }
         return super.visitPeriodo(ctx);
+    }
+
+    public boolean dataValida(String data) {
+        try {
+            configuracaoCurCronograma.dataFormater.parse(data);
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean periodoValido(String dataInicial, String dataFinal) {
+        Date data1, data2;
+        try {
+            data1 = configuracaoCurCronograma.dataFormater.parse(dataInicial);
+            data2 = configuracaoCurCronograma.dataFormater.parse(dataFinal);
+        } catch (ParseException e) {
+            // Retorna true, pois o erro das datas invalidas ja sera acusado
+            // pelo metodo dataValida
+            return true;
+        }
+
+        if (data1.before(data2) || data1.equals(data2)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

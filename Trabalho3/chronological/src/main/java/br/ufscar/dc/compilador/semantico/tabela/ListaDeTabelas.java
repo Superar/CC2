@@ -1,6 +1,7 @@
 package br.ufscar.dc.compilador.semantico.tabela;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public final class ListaDeTabelas {
 
@@ -23,6 +24,11 @@ public final class ListaDeTabelas {
     public void adicionarSimbolo(String nomeTabela, String simbolo) {
         TabelaDeSimbolos tabela = getTabela(nomeTabela);
         tabela.adicionarSimbolo(simbolo);
+    }
+
+    public void adicionarPeriodo(String nomeTabela, Date dataInicial, Date dataFinal) {
+        TabelaDeSimbolos tabela = getTabela(nomeTabela);
+        tabela.adicionarPeriodo(dataInicial, dataFinal);
     }
 
     public boolean temTabela(String nome) {

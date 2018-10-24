@@ -1,8 +1,6 @@
 package br.ufscar.dc.compilador.utils;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import br.ufscar.dc.antlr.ChronologicalParser.ConfigsContext;
 import br.ufscar.dc.antlr.ChronologicalParser.ConfiguracaoContext;

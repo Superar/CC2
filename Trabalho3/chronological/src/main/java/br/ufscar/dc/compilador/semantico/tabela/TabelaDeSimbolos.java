@@ -1,11 +1,12 @@
 package br.ufscar.dc.compilador.semantico.tabela;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 class TabelaDeSimbolos {
 
     String cronograma;
-    private ArrayList<String> simbolos;
+    private ArrayList<EntradaTabelaDeSimbolos> simbolos;
 
     public TabelaDeSimbolos(String nome) {
         cronograma = nome;
@@ -13,16 +14,20 @@ class TabelaDeSimbolos {
     }
 
     public void adicionarSimbolo(String nome) {
-        simbolos.add(nome);
+        simbolos.add(new EntradaTabelaDeSimbolos(nome));
     }
 
     public boolean temSimbolo(String simbolo) {
-        for (String s : simbolos) {
-            if (s.equals(simbolo)) {
+        for (EntradaTabelaDeSimbolos s : simbolos) {
+            if (s.nomeAtividade.equals(simbolo)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public void adicionarPeriodo(Date dataInicial, Date dataFinal) {
+        simbolos.get(simbolos.size() - 1).adicionarPeriodo(dataInicial, dataFinal);
     }
 
     @Override

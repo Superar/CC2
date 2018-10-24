@@ -12,7 +12,6 @@ import br.ufscar.dc.antlr.*;
 import br.ufscar.dc.compilador.erros.*;
 import br.ufscar.dc.compilador.gerador.GeradorDeCodigo;
 import br.ufscar.dc.compilador.semantico.AnalisadorSemantico;
-import br.ufscar.dc.compilador.semantico.VisitorPreencherTabelas;
 
 public final class Compilador {
     static PrintStream origout;
@@ -61,8 +60,6 @@ public final class Compilador {
                 ChronologicalParser.CronogramasContext arvore = parser.cronogramas();
 
                 // Analise semantica
-                VisitorPreencherTabelas preencherTabelas = new VisitorPreencherTabelas();
-                preencherTabelas.visitCronogramas(arvore);
                 AnalisadorSemantico analisadorSemantico = new AnalisadorSemantico();
                 analisadorSemantico.visitCronogramas(arvore);
 
@@ -71,10 +68,10 @@ public final class Compilador {
                 }
 
                 // Geracao de codigo
-                // GeradorDeCodigo geradorDeCodigo = new GeradorDeCodigo();
-                // ParseTreeWalker walker = new ParseTreeWalker();
-                // walker.walk(geradorDeCodigo, arvore);
-                // System.out.println(geradorDeCodigo.getCodigo());
+                GeradorDeCodigo geradorDeCodigo = new GeradorDeCodigo();
+                ParseTreeWalker walker = new ParseTreeWalker();
+                walker.walk(geradorDeCodigo, arvore);
+                System.out.println(geradorDeCodigo.getCodigo());
             } catch (IOException ex) {
                 Logger.getLogger(Compilador.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ParseCancellationException ex) { // Erro de compilacao lexico ou sintatico

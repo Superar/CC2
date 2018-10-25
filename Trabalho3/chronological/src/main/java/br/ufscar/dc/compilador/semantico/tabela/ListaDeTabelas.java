@@ -43,6 +43,18 @@ public final class ListaDeTabelas {
         return getTabela(nomeTabela).temSimbolo(simbolo);
     }
 
+    public Date dataInicialDeCronograma(String nomeTabela) {
+        return getTabela(nomeTabela).minData();
+    }
+
+    public Date dataFinalDeCronograma(String nomeTabela) {
+        return getTabela(nomeTabela).maxData();
+    }
+
+    public ArrayList<Periodo> getPeriodosDeAtividade(String nomeTabela, String nomeAtividade) {
+        return getTabela(nomeTabela).getPeriodosDeAtividade(nomeAtividade);
+    }
+
     private TabelaDeSimbolos getTabela(String nome) {
         for (TabelaDeSimbolos tabela : tabelas) {
             if (tabela.cronograma.equals(nome)) {

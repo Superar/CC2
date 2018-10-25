@@ -9,6 +9,7 @@ public class Configuracoes {
 
     public boolean linhasHorizontais;
     public boolean linhasVerticais;
+    public String esquemaDeCores;
     public String cor;
     public String formatoData;
     public double alturaBarra;
@@ -20,6 +21,7 @@ public class Configuracoes {
         // Valores padrao
         linhasHorizontais = false;
         linhasVerticais = false;
+        esquemaDeCores = "HTML";
         cor = "000000";
         alturaBarra = 0.5;
         formatoData = "dd/mm/yyyy";
@@ -41,7 +43,14 @@ public class Configuracoes {
         } else if (ctx.getText().equals("Linhas verticais")) {
             linhasVerticais = true;
         } else if (ctx.cor() != null) {
-            cor = ctx.cor().getText();
+            if (ctx.cor().cor_rgb() != null) {
+                esquemaDeCores = "RGB";
+                // Ignora () no inicio e fim da definicao da cor
+                cor = ctx.cor().cor_rgb().getText().substring(1, ctx.cor().cor_rgb().getText().length() - 1);
+            } else {
+                esquemaDeCores = "HTML";
+                cor = ctx.cor().cor_hex().getText();
+            }
         } else if (ctx.altura_barra() != null) {
             alturaBarra = Double.parseDouble(ctx.altura_barra().NUMERO_REAL().getText());
         } else if (ctx.data_formato() != null) {

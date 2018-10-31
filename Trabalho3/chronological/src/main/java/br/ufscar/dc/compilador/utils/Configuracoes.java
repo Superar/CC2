@@ -17,16 +17,10 @@ public class Configuracoes {
 
     public SimpleDateFormat dataFormater;
 
+    public boolean corAlterada, alturaBarraAlterada;
+
     public Configuracoes(ConfiguracaoContext ctx) {
-        // Valores padrao
-        linhasHorizontais = false;
-        linhasVerticais = false;
-        esquemaDeCores = "HTML";
-        cor = "000000";
-        alturaBarra = 0.5;
-        formatoData = "dd/mm/yyyy";
-        dataFormater = new SimpleDateFormat("dd/MM/yyyy");
-        mostrarDias = false;
+        this();
 
         // Altera valores padrao conforme forem visitados
         parseConfig(ctx.config1);
@@ -37,22 +31,42 @@ public class Configuracoes {
         }
     }
 
+    public Configuracoes() {
+        // Valores padrao
+        linhasHorizontais = false;
+        linhasVerticais = false;
+        esquemaDeCores = "HTML";
+        cor = "FFFFFF";
+        alturaBarra = 0.5;
+        formatoData = "dd/mm/yyyy";
+        dataFormater = new SimpleDateFormat("dd/MM/yyyy");
+        mostrarDias = false;
+
+        corAlterada = false;
+        alturaBarraAlterada = false;
+    }
+
     private void parseConfig(ConfigsContext ctx) {
         if (ctx.getText().equals("Linhas horizontais")) {
             linhasHorizontais = true;
         } else if (ctx.getText().equals("Linhas verticais")) {
             linhasVerticais = true;
         } else if (ctx.cor() != null) {
+            corAlterada = true;
             if (ctx.cor().cor_rgb() != null) {
                 esquemaDeCores = "RGB";
                 // Ignora () no inicio e fim da definicao da cor
-                cor = ctx.cor().cor_rgb().getText().substring(1, ctx.cor().cor_rgb().getText().length() - 1);
+                String text = ctx.cor().cor_rgb().getText();
+                cor = text.substring(1, text.length() - 1);
             } else {
                 esquemaDeCores = "HTML";
-                cor = ctx.cor().cor_hex().getText();
+                // Ignora o 0x no inicio da deficinao de cor
+                String text = ctx.cor().cor_hex().getText();
+                cor = text.substring(2, text.length());
             }
         } else if (ctx.altura_barra() != null) {
             alturaBarra = Double.parseDouble(ctx.altura_barra().NUMERO_REAL().getText());
+            alturaBarraAlterada = true;
         } else if (ctx.data_formato() != null) {
             formatoData = ctx.data_formato().getText();
             dataFormater = new SimpleDateFormat(ctx.data_formato().getText().replace("m", "M"));

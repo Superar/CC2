@@ -1,6 +1,7 @@
 package br.ufscar.dc.compilador.gerador;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import br.ufscar.dc.antlr.ChronologicalBaseListener;
 import br.ufscar.dc.antlr.ChronologicalParser.AtividadeContext;
@@ -69,7 +70,12 @@ public class GeradorDeCodigo extends ChronologicalBaseListener {
         curCronograma = ctx.IDENT().getText();
 
         // Analisa as configuracoes a serem utilizadas no cronograma
-        configuracaoCurCronograma = new Configuracoes(ctx.configuracao());
+        if (ctx.configuracao() != null) {
+            configuracaoCurCronograma = new Configuracoes(ctx.configuracao());
+        } else {
+            // Configuracao padrao
+            configuracaoCurCronograma = new Configuracoes();
+        }
 
         // Definicoes de cores
         CodigoGerado += "\\definecolor{" + ctx.IDENT().getText() + "}{" + configuracaoCurCronograma.esquemaDeCores
@@ -91,8 +97,8 @@ public class GeradorDeCodigo extends ChronologicalBaseListener {
             CodigoGrafico += "vgrid,";
         }
         CodigoGrafico += "time slot format=little-endian,";
-        CodigoGrafico += "inline,";
         CodigoGrafico += "bar/.append style={fill=" + ctx.IDENT().getText() + ", inner sep=0pt},";
+        CodigoGrafico += "milestone/.append style={fill=" + ctx.IDENT().getText() + ", inner sep=0pt},";
         CodigoGrafico += "bar height=" + configuracaoCurCronograma.alturaBarra;
         CodigoGrafico += "]{";
         // Datas limites do grafico
@@ -130,9 +136,16 @@ public class GeradorDeCodigo extends ChronologicalBaseListener {
     public void enterAtividade(AtividadeContext ctx) {
         curAtividade++;
 
+        Configuracoes configuracoesAtividade = null;
         // Configuracoes locais da atividade
         if (ctx.configuracao() != null) {
-            Configuracoes configuracoesAtividade = new Configuracoes(ctx.configuracao());
+            configuracoesAtividade = new Configuracoes(ctx.configuracao());
+
+            // Definicoes de cores
+            if (configuracoesAtividade.corAlterada) {
+                CodigoGerado += "\\definecolor{" + curCronograma + "-" + ctx.IDENT().getText() + "}{"
+                        + configuracoesAtividade.esquemaDeCores + "}{" + configuracoesAtividade.cor + "}\n";
+            }
         }
 
         /*----------- TABELA -----------*/
@@ -151,14 +164,64 @@ public class GeradorDeCodigo extends ChronologicalBaseListener {
         CodigoTabela += "\n\\\\\n";
 
         /*----------- GRAFICO -----------*/
-        for (Periodo p : tabelas.getPeriodosDeAtividade(curCronograma, ctx.IDENT().getText())) {
+        ArrayList<Periodo> periodos = tabelas.getPeriodosDeAtividade(curCronograma, ctx.IDENT().getText());
+        for (int num_periodo = 0; num_periodo < periodos.size(); num_periodo++) {
+            Periodo p = periodos.get(num_periodo);
             if (!p.dataInicial.equals(p.dataFinal)) {
-                CodigoGrafico += "\\ganttbar{" + ctx.IDENT().getText() + "}{";
-                CodigoGrafico += pdfDateFormat.format(p.dataInicial) + "}{";
-                CodigoGrafico += pdfDateFormat.format(p.dataFinal) + "}\\\\\n";
+                CodigoGrafico += "\\ganttbar";
+
+                if (configuracoesAtividade != null) {
+                    CodigoGrafico += "[";
+                    if (configuracoesAtividade.corAlterada) {
+                        CodigoGrafico += "bar/.append style={fill=" + curCronograma + "-" + ctx.IDENT().getText()
+                                + ", inner sep=0pt}";
+                        if (configuracoesAtividade.alturaBarraAlterada) {
+                            CodigoGrafico += ", ";
+                        }
+                    }
+                    if (configuracoesAtividade.alturaBarraAlterada) {
+                        CodigoGrafico += "bar height=" + configuracoesAtividade.alturaBarra;
+                    }
+                    CodigoGrafico += "]";
+                }
+
+                if (num_periodo == 0) {
+                    CodigoGrafico += "{Atividade " + curAtividade + "}";
+                } else {
+                    CodigoGrafico += "{}";
+                }
+                CodigoGrafico += "{" + pdfDateFormat.format(p.dataInicial) + "}{";
+                CodigoGrafico += pdfDateFormat.format(p.dataFinal) + "}";
             } else {
-                CodigoGrafico += "\\ganttmilestone{" + ctx.IDENT().getText() + "}{";
-                CodigoGrafico += pdfDateFormat.format(p.dataInicial) + "}\\\\\n";
+                CodigoGrafico += "\\ganttmilestone";
+
+                if (configuracoesAtividade != null) {
+                    CodigoGrafico += "[";
+                    if (configuracoesAtividade.corAlterada) {
+                        CodigoGrafico += "milestone/.append style={fill=" + curCronograma + "-" + ctx.IDENT().getText()
+                                + ", inner sep=0pt}";
+                        if (configuracoesAtividade.alturaBarraAlterada) {
+                            CodigoGrafico += ", ";
+                        }
+                    }
+                    if (configuracoesAtividade.alturaBarraAlterada) {
+                        CodigoGrafico += "milestone height=" + configuracoesAtividade.alturaBarra;
+                    }
+                    CodigoGrafico += "]";
+                }
+
+                if (num_periodo == 0) {
+                    CodigoGrafico += "{Atividade " + curAtividade + "}";
+                } else {
+                    CodigoGrafico += "{}";
+                }
+                CodigoGrafico += "{" + pdfDateFormat.format(p.dataInicial) + "}";
+            }
+            
+            if (num_periodo == periodos.size() - 1) {
+                CodigoGrafico += "\\\\\n";
+            } else {
+                CodigoGrafico += "\n";
             }
         }
     }

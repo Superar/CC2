@@ -51,5 +51,8 @@ done
 
 mvn -q -f chronological/ clean package
 java -jar chronological/target/chronological-0.1-jar-with-dependencies.jar $FILE ${FILE%.*}.tex
-pdflatex -output-directory $(dirname $FILE) ${FILE%.*}.tex > /dev/null 2> /dev/null
-rm ${FILE%.*}.log ${FILE%.*}.aux
+
+if grep -q "documentclass" "${FILE%.*}.tex"; then
+    pdflatex -output-directory $(dirname $FILE) ${FILE%.*}.tex > /dev/null 2> /dev/null
+    rm ${FILE%.*}.log ${FILE%.*}.aux
+fi

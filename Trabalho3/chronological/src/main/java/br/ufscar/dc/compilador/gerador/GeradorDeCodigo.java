@@ -96,6 +96,9 @@ public class GeradorDeCodigo extends ChronologicalBaseListener {
         if (configuracaoCurCronograma.linhasVerticais) {
             CodigoGrafico += "vgrid,";
         }
+        if (!configuracaoCurCronograma.mostrarDias) {
+            CodigoGrafico += "compress calendar,";
+        }
         CodigoGrafico += "time slot format=little-endian,";
         CodigoGrafico += "bar/.append style={fill=" + ctx.IDENT().getText() + ", inner sep=0pt},";
         CodigoGrafico += "milestone/.append style={fill=" + ctx.IDENT().getText() + ", inner sep=0pt},";

@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import br.ufscar.dc.antlr.*;
 import br.ufscar.dc.compilador.erros.*;
 import br.ufscar.dc.compilador.gerador.GeradorDeCodigo;
+import br.ufscar.dc.compilador.semantico.AnalisadorDeDependencias;
 import br.ufscar.dc.compilador.semantico.AnalisadorSemantico;
 
 public final class Compilador {
@@ -62,6 +63,8 @@ public final class Compilador {
                 // Analise semantica
                 AnalisadorSemantico analisadorSemantico = new AnalisadorSemantico();
                 analisadorSemantico.visitCronogramas(arvore);
+                AnalisadorDeDependencias analisadorDependencias = new AnalisadorDeDependencias();
+                analisadorDependencias.visitCronogramas(arvore);
 
                 if (ErroSemantico.getInstance().temErros()) {
                     throw new ParseCancellationException(ErroSemantico.getInstance().toString());

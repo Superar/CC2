@@ -49,10 +49,14 @@ do
 fi
 done
 
-mvn -q -f chronological/ clean package
-java -jar chronological/target/chronological-0.1-jar-with-dependencies.jar $FILE ${FILE%.*}.tex
+mkdir -p saidaGerada
 
-if grep -q "documentclass" "${FILE%.*}.tex"; then
-    pdflatex -output-directory $(dirname $FILE) ${FILE%.*}.tex > /dev/null 2> /dev/null
-    rm ${FILE%.*}.log ${FILE%.*}.aux
+FILE_BASENAME=$(basename $FILE)
+
+mvn -q -f chronological/ clean package
+java -jar chronological/target/chronological-0.1-jar-with-dependencies.jar $FILE saidaGerada/${FILE_BASENAME%.*}.tex
+
+if grep -q "documentclass" "saidaGerada/${FILE_BASENAME%.*}.tex"; then
+    pdflatex -output-directory saidaGerada saidaGerada/${FILE_BASENAME%.*}.tex > /dev/null 2> /dev/null
+    rm saidaGerada/${FILE_BASENAME%.*}.log saidaGerada/${FILE_BASENAME%.*}.aux
 fi

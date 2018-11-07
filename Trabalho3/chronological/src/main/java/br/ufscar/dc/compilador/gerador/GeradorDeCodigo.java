@@ -161,6 +161,8 @@ public class GeradorDeCodigo extends ChronologicalBaseListener {
             }
         }
 
+        ArrayList<Periodo> periodos = tabelas.getPeriodosDeAtividade(curCronograma, ctx.IDENT().getText());
+
         /*----------- TABELA -----------*/
         // A primeira atividade nao possui midrule, possui toprule
         // (adicionada em enterCronograma)
@@ -174,10 +176,32 @@ public class GeradorDeCodigo extends ChronologicalBaseListener {
         // Descricao
         // Deve-se ignorar as aspas que delimitam o texto da descricao
         codigoTabela += ctx.descricao().TEXTO().getText().substring(1, ctx.descricao().TEXTO().getText().length() - 1);
-        codigoTabela += "\n\\\\\n";
+        codigoTabela += "\n\\\\\n\\\\\n";
+        codigoTabela += "Datas de execu\\c{c}\\~{a}o:\\\\\n";
+
+        // Datas
+        for (Periodo p : periodos) {
+            if (!p.dataInicial.equals(p.dataFinal)) {
+                if (configuracoesAtividade != null) {
+                    codigoTabela += configuracoesAtividade.dataFormater.format(p.dataInicial);
+                    codigoTabela += " - ";
+                    codigoTabela += configuracoesAtividade.dataFormater.format(p.dataFinal);
+                } else {
+                    codigoTabela += configuracaoCurCronograma.dataFormater.format(p.dataInicial);
+                    codigoTabela += " - ";
+                    codigoTabela += configuracaoCurCronograma.dataFormater.format(p.dataFinal);
+                }
+            } else {
+                if (configuracoesAtividade != null) {
+                    codigoTabela += configuracoesAtividade.dataFormater.format(p.dataInicial);
+                } else {
+                    codigoTabela += configuracaoCurCronograma.dataFormater.format(p.dataInicial);
+                }
+            }
+            codigoTabela += "\\\\\n";
+        }
 
         /*----------- GRAFICO -----------*/
-        ArrayList<Periodo> periodos = tabelas.getPeriodosDeAtividade(curCronograma, ctx.IDENT().getText());
         for (int num_periodo = 0; num_periodo < periodos.size(); num_periodo++) {
             Periodo p = periodos.get(num_periodo);
             if (!p.dataInicial.equals(p.dataFinal)) {

@@ -5,16 +5,19 @@ import java.util.ArrayList;
 
 import br.ufscar.dc.antlr.ChronologicalBaseListener;
 import br.ufscar.dc.antlr.ChronologicalParser.AtividadeContext;
+import br.ufscar.dc.antlr.ChronologicalParser.AtividadesContext;
 import br.ufscar.dc.antlr.ChronologicalParser.CronogramaContext;
 import br.ufscar.dc.antlr.ChronologicalParser.CronogramasContext;
+import br.ufscar.dc.antlr.ChronologicalParser.DependenciaContext;
 import br.ufscar.dc.compilador.semantico.tabela.ListaDeTabelas;
 import br.ufscar.dc.compilador.semantico.tabela.Periodo;
 import br.ufscar.dc.compilador.utils.*;
 
 public class GeradorDeCodigo extends ChronologicalBaseListener {
-    private String CodigoGerado;
-    private String CodigoTabela;
-    private String CodigoGrafico;
+    private String codigoGerado;
+    private String codigoTabela;
+    private String codigoGrafico;
+    private String codigoDependencias;
 
     // Tabela de simbolos
     private static final ListaDeTabelas tabelas = ListaDeTabelas.getInstance();
@@ -31,41 +34,42 @@ public class GeradorDeCodigo extends ChronologicalBaseListener {
     private final static SimpleDateFormat pdfDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     public String getCodigo() {
-        return CodigoGerado;
+        return codigoGerado;
     }
 
     public GeradorDeCodigo() {
         super();
-        CodigoGerado = "";
+        codigoGerado = "";
     }
 
     @Override
     public void enterCronogramas(CronogramasContext ctx) {
         // Preamble do documento LaTeX
-        CodigoGerado += "\\documentclass[a4paper,10pt]{article}\n";
-        CodigoGerado += "\\usepackage{longtable}\n";
-        CodigoGerado += "\\usepackage{colortbl}\n";
-        CodigoGerado += "\\newcommand{\\myrowcolour}{\\rowcolor[gray]{0.925}}\n";
-        CodigoGerado += "\\usepackage{booktabs}\n";
-        CodigoGerado += "\\usepackage{pgfgantt}\n";
-        CodigoGerado += "\\usepackage{pdflscape}\n";
-        CodigoGerado += "\\usepackage[utf8]{inputenc}\n";
-        CodigoGerado += "\\usepackage[margin=.25in]{geometry}\n";
-        CodigoGerado += "\\pagenumbering{gobble}\n";
-        CodigoGerado += "\\begin{document}\n";
+        codigoGerado += "\\documentclass[a4paper,10pt]{article}\n";
+        codigoGerado += "\\usepackage{longtable}\n";
+        codigoGerado += "\\usepackage{colortbl}\n";
+        codigoGerado += "\\newcommand{\\myrowcolour}{\\rowcolor[gray]{0.925}}\n";
+        codigoGerado += "\\usepackage{booktabs}\n";
+        codigoGerado += "\\usepackage{pgfgantt}\n";
+        codigoGerado += "\\usepackage{pdflscape}\n";
+        codigoGerado += "\\usepackage[utf8]{inputenc}\n";
+        codigoGerado += "\\usepackage[margin=.25in]{geometry}\n";
+        codigoGerado += "\\pagenumbering{gobble}\n";
+        codigoGerado += "\\begin{document}\n";
     }
 
     @Override
     public void exitCronogramas(CronogramasContext ctx) {
-        CodigoGerado += "\\end{document}";
+        codigoGerado += "\\end{document}";
     }
 
     @Override
     public void enterCronograma(CronogramaContext ctx) {
         // Reinicia as strings com o codigo da tabela e do grafico alem do numero da
         // atividade atual
-        CodigoTabela = "";
-        CodigoGrafico = "";
+        codigoTabela = "";
+        codigoGrafico = "";
+        codigoDependencias = "";
         curAtividade = 0;
         curCronograma = ctx.IDENT().getText();
 
@@ -78,61 +82,67 @@ public class GeradorDeCodigo extends ChronologicalBaseListener {
         }
 
         // Definicoes de cores
-        CodigoGerado += "\\definecolor{" + ctx.IDENT().getText() + "}{" + configuracaoCurCronograma.esquemaDeCores
+        codigoGerado += "\\definecolor{" + ctx.IDENT().getText() + "}{" + configuracaoCurCronograma.esquemaDeCores
                 + "}{" + configuracaoCurCronograma.cor + "}\n";
 
         /*----------- TABELA -----------*/
-        CodigoTabela += "\\begin{longtable}{p{0.97\\textwidth}}\n";
-        CodigoTabela += "\\toprule\n";
+        codigoTabela += "\\begin{longtable}{p{0.97\\textwidth}}\n";
+        codigoTabela += "\\toprule\n";
 
         /*----------- GRAFICO -----------*/
-        CodigoGrafico += "\\begin{landscape}\n";
-        CodigoGrafico += "\\begin{center}\n";
-        CodigoGrafico += "\\begin{ganttchart}[";
+        codigoGrafico += "\\begin{landscape}\n";
+        codigoGrafico += "\\begin{center}\n";
+        codigoGrafico += "\\begin{ganttchart}[";
         // Configuracoes do grafico
         if (configuracaoCurCronograma.linhasHorizontais) {
-            CodigoGrafico += "hgrid,";
+            codigoGrafico += "hgrid,";
         }
         if (configuracaoCurCronograma.linhasVerticais) {
-            CodigoGrafico += "vgrid,";
+            codigoGrafico += "vgrid,";
         }
         if (!configuracaoCurCronograma.mostrarDias) {
-            CodigoGrafico += "compress calendar,";
+            codigoGrafico += "compress calendar,";
         }
-        CodigoGrafico += "time slot format=little-endian,";
-        CodigoGrafico += "bar/.append style={fill=" + ctx.IDENT().getText() + ", inner sep=0pt},";
-        CodigoGrafico += "milestone/.append style={fill=" + ctx.IDENT().getText() + ", inner sep=0pt},";
-        CodigoGrafico += "bar height=" + configuracaoCurCronograma.alturaBarra;
-        CodigoGrafico += "]{";
+        codigoGrafico += "time slot format=little-endian,";
+        codigoGrafico += "bar/.append style={fill=" + ctx.IDENT().getText() + ", inner sep=0pt},";
+        codigoGrafico += "milestone/.append style={fill=" + ctx.IDENT().getText() + ", inner sep=0pt},";
+        codigoGrafico += "bar height=" + configuracaoCurCronograma.alturaBarra;
+        codigoGrafico += "]{";
         // Datas limites do grafico
-        CodigoGrafico += pdfDateFormat.format(tabelas.dataInicialDeCronograma(ctx.IDENT().getText()));
-        CodigoGrafico += "}{";
-        CodigoGrafico += pdfDateFormat.format(tabelas.dataFinalDeCronograma(ctx.IDENT().getText()));
-        CodigoGrafico += "}\n";
+        codigoGrafico += pdfDateFormat.format(tabelas.dataInicialDeCronograma(ctx.IDENT().getText()));
+        codigoGrafico += "}{";
+        codigoGrafico += pdfDateFormat.format(tabelas.dataFinalDeCronograma(ctx.IDENT().getText()));
+        codigoGrafico += "}\n";
 
-        CodigoGrafico += "\\gantttitlecalendar{year, month";
+        codigoGrafico += "\\gantttitlecalendar{year, month";
         if (configuracaoCurCronograma.mostrarDias) {
-            CodigoGrafico += ", day}\\\\\n";
+            codigoGrafico += ", day}\\\\\n";
         } else {
-            CodigoGrafico += "}\\\\\n";
+            codigoGrafico += "}\\\\\n";
         }
     }
 
     @Override
     public void exitCronograma(CronogramaContext ctx) {
         /*----------- TABELA -----------*/
-        CodigoTabela += "\\bottomrule\n";
-        CodigoTabela += "\\end{longtable}\n";
-        CodigoTabela += "\\newpage\n";
+        codigoTabela += "\\bottomrule\n";
+        codigoTabela += "\\end{longtable}\n";
+        codigoTabela += "\\newpage\n";
 
         /*----------- GRAFICO -----------*/
-        CodigoGrafico += "\\end{ganttchart}\n";
-        CodigoGrafico += "\\end{center}\n";
-        CodigoGrafico += "\\end{landscape}\n";
+        codigoGrafico += "\\end{ganttchart}\n";
+        codigoGrafico += "\\end{center}\n";
+        codigoGrafico += "\\end{landscape}\n";
 
         /*----------- CODIGO FINAL -----------*/
-        CodigoGerado += CodigoTabela;
-        CodigoGerado += CodigoGrafico;
+        codigoGerado += codigoTabela;
+        codigoGerado += codigoGrafico;
+    }
+
+    @Override
+    public void exitAtividades(AtividadesContext ctx) {
+        codigoGrafico += codigoDependencias;
+        super.exitAtividades(ctx);
     }
 
     @Override
@@ -146,7 +156,7 @@ public class GeradorDeCodigo extends ChronologicalBaseListener {
 
             // Definicoes de cores
             if (configuracoesAtividade.corAlterada) {
-                CodigoGerado += "\\definecolor{" + curCronograma + "-" + ctx.IDENT().getText() + "}{"
+                codigoGerado += "\\definecolor{" + curCronograma + "-" + ctx.IDENT().getText() + "}{"
                         + configuracoesAtividade.esquemaDeCores + "}{" + configuracoesAtividade.cor + "}\n";
             }
         }
@@ -155,77 +165,96 @@ public class GeradorDeCodigo extends ChronologicalBaseListener {
         // A primeira atividade nao possui midrule, possui toprule
         // (adicionada em enterCronograma)
         if (curAtividade != 1) {
-            CodigoTabela += "\\midrule\n";
+            codigoTabela += "\\midrule\n";
         }
-        CodigoTabela += "\\myrowcolour\n";
+        codigoTabela += "\\myrowcolour\n";
         // Cabecalho
-        CodigoTabela += "\\bfseries Atividade " + curAtividade + ": " + ctx.IDENT().getText() + " \\\\\n";
-        CodigoTabela += "\\midrule\n";
+        codigoTabela += "\\bfseries Atividade " + curAtividade + ": " + ctx.IDENT().getText() + " \\\\\n";
+        codigoTabela += "\\midrule\n";
         // Descricao
         // Deve-se ignorar as aspas que delimitam o texto da descricao
-        CodigoTabela += ctx.descricao().TEXTO().getText().substring(1, ctx.descricao().TEXTO().getText().length() - 1);
-        CodigoTabela += "\n\\\\\n";
+        codigoTabela += ctx.descricao().TEXTO().getText().substring(1, ctx.descricao().TEXTO().getText().length() - 1);
+        codigoTabela += "\n\\\\\n";
 
         /*----------- GRAFICO -----------*/
         ArrayList<Periodo> periodos = tabelas.getPeriodosDeAtividade(curCronograma, ctx.IDENT().getText());
         for (int num_periodo = 0; num_periodo < periodos.size(); num_periodo++) {
             Periodo p = periodos.get(num_periodo);
             if (!p.dataInicial.equals(p.dataFinal)) {
-                CodigoGrafico += "\\ganttbar";
+                codigoGrafico += "\\ganttbar[name=" + ctx.IDENT().getText() + "." + (num_periodo + 1);
 
                 if (configuracoesAtividade != null) {
-                    CodigoGrafico += "[";
+                    codigoGrafico += ", ";
                     if (configuracoesAtividade.corAlterada) {
-                        CodigoGrafico += "bar/.append style={fill=" + curCronograma + "-" + ctx.IDENT().getText()
+                        codigoGrafico += "bar/.append style={fill=" + curCronograma + "-" + ctx.IDENT().getText()
                                 + ", inner sep=0pt}";
                         if (configuracoesAtividade.alturaBarraAlterada) {
-                            CodigoGrafico += ", ";
+                            codigoGrafico += ", ";
                         }
                     }
                     if (configuracoesAtividade.alturaBarraAlterada) {
-                        CodigoGrafico += "bar height=" + configuracoesAtividade.alturaBarra;
+                        codigoGrafico += "bar height=" + configuracoesAtividade.alturaBarra;
                     }
-                    CodigoGrafico += "]";
                 }
+                codigoGrafico += "]";
 
                 if (num_periodo == 0) {
-                    CodigoGrafico += "{Atividade " + curAtividade + "}";
+                    codigoGrafico += "{Atividade " + curAtividade + "}";
                 } else {
-                    CodigoGrafico += "{}";
+                    codigoGrafico += "{}";
                 }
-                CodigoGrafico += "{" + pdfDateFormat.format(p.dataInicial) + "}{";
-                CodigoGrafico += pdfDateFormat.format(p.dataFinal) + "}";
+                codigoGrafico += "{" + pdfDateFormat.format(p.dataInicial) + "}{";
+                codigoGrafico += pdfDateFormat.format(p.dataFinal) + "}";
             } else {
-                CodigoGrafico += "\\ganttmilestone";
+                codigoGrafico += "\\ganttmilestone[name=" + ctx.IDENT().getText() + "." + (num_periodo + 1);
 
                 if (configuracoesAtividade != null) {
-                    CodigoGrafico += "[";
+                    codigoGrafico += ", ";
                     if (configuracoesAtividade.corAlterada) {
-                        CodigoGrafico += "milestone/.append style={fill=" + curCronograma + "-" + ctx.IDENT().getText()
+                        codigoGrafico += "milestone/.append style={fill=" + curCronograma + "-" + ctx.IDENT().getText()
                                 + ", inner sep=0pt}";
                         if (configuracoesAtividade.alturaBarraAlterada) {
-                            CodigoGrafico += ", ";
+                            codigoGrafico += ", ";
                         }
                     }
                     if (configuracoesAtividade.alturaBarraAlterada) {
-                        CodigoGrafico += "milestone height=" + configuracoesAtividade.alturaBarra;
+                        codigoGrafico += "milestone height=" + configuracoesAtividade.alturaBarra;
                     }
-                    CodigoGrafico += "]";
                 }
+                codigoGrafico += "]";
 
                 if (num_periodo == 0) {
-                    CodigoGrafico += "{Atividade " + curAtividade + "}";
+                    codigoGrafico += "{Atividade " + curAtividade + "}";
                 } else {
-                    CodigoGrafico += "{}";
+                    codigoGrafico += "{}";
                 }
-                CodigoGrafico += "{" + pdfDateFormat.format(p.dataInicial) + "}";
+                codigoGrafico += "{" + pdfDateFormat.format(p.dataInicial) + "}";
             }
-            
+
             if (num_periodo == periodos.size() - 1) {
-                CodigoGrafico += "\\\\\n";
+                codigoGrafico += "\\\\\n";
             } else {
-                CodigoGrafico += "\n";
+                codigoGrafico += "\n";
             }
         }
+    }
+
+    @Override
+    public void enterDependencia(DependenciaContext ctx) {
+        codigoDependencias += "\\ganttlink{" + ctx.IDENT().getText() + ".";
+        if (ctx.NUMERO_INTEIRO() == null) {
+            codigoDependencias += "1";
+        } else {
+            codigoDependencias += ctx.NUMERO_INTEIRO().getText();
+        }
+        codigoDependencias += "}{";
+
+        // Percorre a arvore em direcao a raiz para recuperar o nome da atividade
+        // em que a dependencia sera conectada
+        AtividadeContext atividade = (AtividadeContext) ctx.getParent().getParent();
+        codigoDependencias += atividade.IDENT().getText();
+        codigoDependencias += ".1}\n";
+
+        super.enterDependencia(ctx);
     }
 }

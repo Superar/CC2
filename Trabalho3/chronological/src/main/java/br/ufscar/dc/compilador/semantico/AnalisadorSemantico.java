@@ -20,7 +20,11 @@ public class AnalisadorSemantico extends ChronologicalBaseVisitor<Void> {
     // cronograma: 'Cronograma' IDENT '{' (atividades)* (configuracao)? '}';
     @Override
     public Void visitCronograma(CronogramaContext ctx) {
-        configuracaoCurCronograma = new Configuracoes(ctx.configuracao());
+        if (ctx.configuracao() != null) {
+            configuracaoCurCronograma = new Configuracoes(ctx.configuracao());
+        } else {
+            configuracaoCurCronograma = new Configuracoes();
+        }
 
         if (!tabelas.temTabela(ctx.IDENT().getText())) {
             tabelas.criarTabela(ctx.IDENT().getText());

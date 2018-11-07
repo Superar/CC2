@@ -21,7 +21,7 @@ Cronograma Trabalho1 {
             "Fazer o tratamento dos erros sintáticos de acordo com os
             exemplos disponibilizados pelo professor.",
             Datas {
-                13/08/2018 - 15/08/2018
+                15/08/2018 - 15/08/2018
             },
             Depende {
                 TratarErrosLexicos

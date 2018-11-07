@@ -1,0 +1,58 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{longtable}
+\usepackage{colortbl}
+\newcommand{\myrowcolour}{\rowcolor[gray]{0.925}}
+\usepackage{booktabs}
+\usepackage{pgfgantt}
+\usepackage{pdflscape}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=.25in]{geometry}
+\pagenumbering{gobble}
+\begin{document}
+\definecolor{FrufflesExemplo}{HTML}{FFFFFF}
+\definecolor{FrufflesExemplo-Atividade1}{RGB}{0,0,255}
+\definecolor{FrufflesExemplo-Atividade2}{RGB}{255,0,0}
+\begin{longtable}{p{0.97\textwidth}}
+\toprule
+\myrowcolour
+\bfseries Atividade 1: Atividade1 \\
+\midrule
+Esta é a descrição da atividade 1.
+\\
+\\
+Datas de execu\c{c}\~{a}o:\\
+01/02/2016 - 31/03/2016\\
+\midrule
+\myrowcolour
+\bfseries Atividade 2: Atividade2 \\
+\midrule
+Este texto descreve o que será realizado
+            na atividade 2
+\\
+\\
+Datas de execu\c{c}\~{a}o:\\
+01/04/2016 - 31/07/2016\\
+\midrule
+\myrowcolour
+\bfseries Atividade 3: Atividade3 \\
+\midrule
+Texto da atividade 3
+\\
+\\
+Datas de execu\c{c}\~{a}o:\\
+01.01.2016 - 30.04.2016\\
+\bottomrule
+\end{longtable}
+\newpage
+\begin{landscape}
+\begin{center}
+\begin{ganttchart}[hgrid,vgrid,compress calendar,time slot format=little-endian,bar/.append style={fill=FrufflesExemplo, inner sep=0pt},milestone/.append style={fill=FrufflesExemplo, inner sep=0pt},bar height=0.5]{01/01/2016}{31/07/2016}
+\gantttitlecalendar{year, month}\\
+\ganttbar[name=Atividade1.1, bar/.append style={fill=FrufflesExemplo-Atividade1, inner sep=0pt}]{Atividade 1}{01/02/2016}{31/03/2016}\\
+\ganttbar[name=Atividade2.1, bar/.append style={fill=FrufflesExemplo-Atividade2, inner sep=0pt}]{Atividade 2}{01/04/2016}{31/07/2016}\\
+\ganttbar[name=Atividade3.1]{Atividade 3}{01/01/2016}{30/04/2016}\\
+\ganttlink{Atividade1.1}{Atividade2.1}
+\end{ganttchart}
+\end{center}
+\end{landscape}
+\end{document}

@@ -1,0 +1,54 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{longtable}
+\usepackage{colortbl}
+\newcommand{\myrowcolour}{\rowcolor[gray]{0.925}}
+\usepackage{booktabs}
+\usepackage{pgfgantt}
+\usepackage{pdflscape}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=.25in]{geometry}
+\pagenumbering{gobble}
+\begin{document}
+\definecolor{FrufflesExemplo}{RGB}{0,225,0}
+\begin{longtable}{p{0.97\textwidth}}
+\toprule
+\myrowcolour
+\bfseries Atividade 1: Atividade1 \\
+\midrule
+Fruffles
+\\
+\\
+Datas de execu\c{c}\~{a}o:\\
+23/09/2018 - 30/09/2018\\
+\midrule
+\myrowcolour
+\bfseries Atividade 2: Atividade2 \\
+\midrule
+Fruffles 2
+\\
+\\
+Datas de execu\c{c}\~{a}o:\\
+23/09/2018 - 30/09/2018\\
+\midrule
+\myrowcolour
+\bfseries Atividade 3: Atividade3 \\
+\midrule
+Fruffles 3
+\\
+\\
+Datas de execu\c{c}\~{a}o:\\
+23/09/2018\\
+\bottomrule
+\end{longtable}
+\newpage
+\begin{landscape}
+\begin{center}
+\begin{ganttchart}[hgrid,vgrid,time slot format=little-endian,bar/.append style={fill=FrufflesExemplo, inner sep=0pt},milestone/.append style={fill=FrufflesExemplo, inner sep=0pt},bar height=0.5]{23/09/2018}{30/09/2018}
+\gantttitlecalendar{year, month, day}\\
+\ganttbar[name=Atividade1.1]{Atividade 1}{23/09/2018}{30/09/2018}\\
+\ganttbar[name=Atividade2.1]{Atividade 2}{23/09/2018}{30/09/2018}\\
+\ganttmilestone[name=Atividade3.1]{Atividade 3}{23/09/2018}\\
+\end{ganttchart}
+\end{center}
+\end{landscape}
+\end{document}

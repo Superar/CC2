@@ -1,0 +1,96 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{longtable}
+\usepackage{colortbl}
+\newcommand{\myrowcolour}{\rowcolor[gray]{0.925}}
+\usepackage{booktabs}
+\usepackage{pgfgantt}
+\usepackage{pdflscape}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=.25in]{geometry}
+\pagenumbering{gobble}
+\begin{document}
+\definecolor{Trabalho1}{HTML}{FFFFFF}
+\begin{longtable}{p{0.97\textwidth}}
+\toprule
+\myrowcolour
+\bfseries Atividade 1: EscreverGramatica \\
+\midrule
+Escrever a gramática de acordo com as especificações
+            no documento PDF disponibilizado pelo professor.
+\\
+\\
+Datas de execu\c{c}\~{a}o:\\
+09/08/2018\\
+\midrule
+\myrowcolour
+\bfseries Atividade 2: TratarErrosLexicos \\
+\midrule
+Fazer o tratamento dos erros léxicos de acordo com os
+            exemplos disponibilizados pelo professor.
+\\
+\\
+Datas de execu\c{c}\~{a}o:\\
+13/08/2018 - 15/08/2018\\
+\midrule
+\myrowcolour
+\bfseries Atividade 3: TratarErrosSintaticos \\
+\midrule
+Fazer o tratamento dos erros sintáticos de acordo com os
+            exemplos disponibilizados pelo professor.
+\\
+\\
+Datas de execu\c{c}\~{a}o:\\
+15/08/2018\\
+\midrule
+\myrowcolour
+\bfseries Atividade 4: TratarErrosSemanticos \\
+\midrule
+Fazer o tratamento de erros semânticos de acordo com os
+            exemplos disponibilizados pelo professor.
+\\
+\\
+Datas de execu\c{c}\~{a}o:\\
+16/08/2018 - 02/09/2018\\
+\midrule
+\myrowcolour
+\bfseries Atividade 5: GeracaoDeCodigo \\
+\midrule
+Implementar a geração de código em C a partir de uma entrada
+            em LA.
+\\
+\\
+Datas de execu\c{c}\~{a}o:\\
+07/09/2018 - 17/09/2018\\
+\midrule
+\myrowcolour
+\bfseries Atividade 6: Documentacao \\
+\midrule
+Revisar o código, comentar trechos importantes e descrever o
+            processo de compilação e execução do compilador em um arquivo README.
+            O projeto do compilador juntamente com os documentos gerados devem ser
+            enviados via AVA.
+\\
+\\
+Datas de execu\c{c}\~{a}o:\\
+19/09/2018\\
+\bottomrule
+\end{longtable}
+\newpage
+\begin{landscape}
+\begin{center}
+\begin{ganttchart}[vgrid,time slot format=little-endian,bar/.append style={fill=Trabalho1, inner sep=0pt},milestone/.append style={fill=Trabalho1, inner sep=0pt},bar height=0.5]{09/08/2018}{19/09/2018}
+\gantttitlecalendar{year, month, day}\\
+\ganttmilestone[name=EscreverGramatica.1]{Atividade 1}{09/08/2018}\\
+\ganttbar[name=TratarErrosLexicos.1]{Atividade 2}{13/08/2018}{15/08/2018}\\
+\ganttmilestone[name=TratarErrosSintaticos.1]{Atividade 3}{15/08/2018}\\
+\ganttbar[name=TratarErrosSemanticos.1]{Atividade 4}{16/08/2018}{02/09/2018}\\
+\ganttbar[name=GeracaoDeCodigo.1]{Atividade 5}{07/09/2018}{17/09/2018}\\
+\ganttmilestone[name=Documentacao.1]{Atividade 6}{19/09/2018}\\
+\ganttlink{EscreverGramatica.1}{TratarErrosLexicos.1}
+\ganttlink{TratarErrosLexicos.1}{TratarErrosSintaticos.1}
+\ganttlink{TratarErrosSintaticos.1}{TratarErrosSemanticos.1}
+\ganttlink{TratarErrosSemanticos.1}{GeracaoDeCodigo.1}
+\end{ganttchart}
+\end{center}
+\end{landscape}
+\end{document}

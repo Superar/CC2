@@ -1,0 +1,58 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{longtable}
+\usepackage{colortbl}
+\newcommand{\myrowcolour}{\rowcolor[gray]{0.925}}
+\usepackage{booktabs}
+\usepackage{pgfgantt}
+\usepackage{pdflscape}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=.25in]{geometry}
+\pagenumbering{gobble}
+\begin{document}
+\definecolor{ExemploConfiguracaoLocal}{RGB}{0,225,0}
+\definecolor{ExemploConfiguracaoLocal-NomeDaAtividade2}{HTML}{A3B1FF}
+\begin{longtable}{p{0.97\textwidth}}
+\toprule
+\myrowcolour
+\bfseries Atividade 1: NomeDaAtividade1 \\
+\midrule
+Descrição da atividade 1
+\\
+\\
+Datas de execu\c{c}\~{a}o:\\
+23/09/2018 - 30/09/2018\\
+05/10/2018 - 08/10/2018\\
+\midrule
+\myrowcolour
+\bfseries Atividade 2: NomeDaAtividade2 \\
+\midrule
+Descrição da atividade 2
+\\
+\\
+Datas de execu\c{c}\~{a}o:\\
+23/09/2018 - 30/09/2018\\
+\midrule
+\myrowcolour
+\bfseries Atividade 3: NomeDaAtividade3 \\
+\midrule
+Descrição da atividade 3
+\\
+\\
+Datas de execu\c{c}\~{a}o:\\
+03/10/2018\\
+\bottomrule
+\end{longtable}
+\newpage
+\begin{landscape}
+\begin{center}
+\begin{ganttchart}[hgrid,vgrid,time slot format=little-endian,bar/.append style={fill=ExemploConfiguracaoLocal, inner sep=0pt},milestone/.append style={fill=ExemploConfiguracaoLocal, inner sep=0pt},bar height=0.5]{23/09/2018}{08/10/2018}
+\gantttitlecalendar{year, month, day}\\
+\ganttbar[name=NomeDaAtividade1.1]{Atividade 1}{23/09/2018}{30/09/2018}
+\ganttbar[name=NomeDaAtividade1.2]{}{05/10/2018}{08/10/2018}\\
+\ganttbar[name=NomeDaAtividade2.1, bar/.append style={fill=ExemploConfiguracaoLocal-NomeDaAtividade2, inner sep=0pt}]{Atividade 2}{23/09/2018}{30/09/2018}\\
+\ganttmilestone[name=NomeDaAtividade3.1]{Atividade 3}{03/10/2018}\\
+\ganttlink{NomeDaAtividade2.1}{NomeDaAtividade3.1}
+\end{ganttchart}
+\end{center}
+\end{landscape}
+\end{document}

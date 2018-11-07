@@ -13,7 +13,7 @@ Cronograma FrufflesExemplo {
             "Este texto descreve o que será realizado
             na atividade 2",
             Datas {
-                01.01.2016 - 31.05.2016
+                01.04.2016 - 31.07.2016
             },
             Configuracao {
                 Cor: (255, 0, 0)

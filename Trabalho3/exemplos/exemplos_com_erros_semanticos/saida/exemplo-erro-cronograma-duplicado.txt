@@ -1,0 +1,2 @@
+Linha 12: cronograma já declarado
+Fim da compilacao

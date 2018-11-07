@@ -10,7 +10,7 @@ cronogramas: (cronograma)+;
 // Cronograma e identificado pela palavra chave "Cronograma" seguido de um nome identificador. Um
 // cronograma possui diversas atividades e um conjunto opcional de configuracoes globais.
 cronograma:
-	'Cronograma' IDENT '{' (atividades)* (configuracao)? '}';
+	'Cronograma' IDENT '{' (atividades)+ (configuracao)? '}';
 
 // As atividades sao separadas por virgula e deve ser necessaria a presenca de pelo menos uma
 // atividade

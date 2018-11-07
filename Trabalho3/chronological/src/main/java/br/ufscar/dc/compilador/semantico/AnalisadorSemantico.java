@@ -51,14 +51,14 @@ public class AnalisadorSemantico extends ChronologicalBaseVisitor<Void> {
         // Verifica configuracoes validas para o escopo de atividade
         if (ctx.parent.getText().startsWith("Atividade")) {
             if (ctx.config1.cor() == null && ctx.config1.altura_barra() == null) {
-                erros.adicionarErro("Linha " + ctx.config1.getStart().getLine()
-                        + ": configuracao \"" + ctx.config1.getText() + "\" nao compativel ao escopo de atividade");
+                erros.adicionarErro("Linha " + ctx.config1.getStart().getLine() + ": configuracao \""
+                        + ctx.config1.getText() + "\" nao compativel ao escopo de atividade");
             }
 
             for (ConfigsContext config : ctx.listaConfig) {
                 if (config.cor() == null && config.altura_barra() == null) {
-                    erros.adicionarErro("Linha " + config.getStart().getLine()
-                            + ": configuracao \"" + config.getText() + "\" nao compativel ao escopo de atividade");
+                    erros.adicionarErro("Linha " + config.getStart().getLine() + ": configuracao \"" + config.getText()
+                            + "\" nao compativel ao escopo de atividade");
                 }
             }
         }

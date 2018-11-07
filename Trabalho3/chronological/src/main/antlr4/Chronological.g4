@@ -60,7 +60,15 @@ cor_hex: NUMERO_HEX;
 
 altura_barra: 'Altura da barra: ' NUMERO_REAL;
 
-dependencias: 'Depende' '{' (IDENT)+ '}';
+// A dependencia com apenas o identificador pode ser utilizada apenas no caso de a atividade de
+// referencia possuir uma unica barra, caso contrario, especifica-se a barra com um numero separado
+// por ponto
+dependencias:
+	'Depende' '{' dep1 = dependencia (
+		',' listaDeps += dependencia
+	)* '}';
+
+dependencia: IDENT ('.' (NUMERO_INTEIRO))?;
 
 // Tres tipos de data sao identificados
 data_formato: LITTLE_ENDIAN | MID_ENDIAN | BIG_ENDIAN;

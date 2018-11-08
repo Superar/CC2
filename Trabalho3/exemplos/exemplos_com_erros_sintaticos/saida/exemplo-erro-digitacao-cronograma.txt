@@ -1,2 +1,2 @@
-Linha 1: erro sintatico proximo a Cronograma
+Linha 1: erro sintatico proximo a Cornograma
 Fim da compilacao

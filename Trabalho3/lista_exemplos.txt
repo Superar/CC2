@@ -1,0 +1,47 @@
+Lista de Exemplos:
+
+Feitos:
+Exemplos sem Erros:
+	Entrada:
+	- exemplo-com-dependências.cr 
+	- exemplo-configuracao-local.cr
+	- exemplo.cr
+	- exemplo-duas-barras.cr
+	- exemplo_trabalho1.cr 
+	
+	Saida:
+	- exemplo-com-dependências.tex 
+	- exemplo-configuracao-local.tex
+	- exemplo.tex
+	- exemplo-duas-barras.tex
+	- exemplo_trabalho1.tex
+
+Exemplos com Erros Semânticos:
+	Entrada:
+	- exemplo-erro-atividade-duplicada.cr
+	- exemplo-erro-cronograma-duplicado.cr
+
+	Saida:
+	- exemplo-erro-atividade-duplicada.txt
+	- exemplo-erro-cronograma-duplicado.txt
+
+Exemplos com Erros Sintáticos:
+	Entrada:	
+	- exemplo-erro-cronograma-vazio.cr
+	- exemplo-erro-digitacao-cronograma.cr
+	- exemplo-erro-identificador.cr
+	- exemplo-erro-sem-cronograma.cr
+
+	Saida:
+	- exemplo-erro-cronograma-vazio.txt
+	- exemplo-erro-digitacao-cronograma.txt
+	- exemplo-erro-identificador.txt
+	- exemplo-erro-sem-cronograma.txt
+
+Exemplos ainda não criados:
+	
+
+	
+
+
+

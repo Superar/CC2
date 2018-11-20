@@ -1,0 +1,2 @@
+Linha 6: Data nao esta conforme o padrao dd.mm.yyyy
+Fim da compilacao

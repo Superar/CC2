@@ -20,10 +20,18 @@ Exemplos com Erros Semânticos:
 	Entrada:
 	- exemplo-erro-atividade-duplicada.cr
 	- exemplo-erro-cronograma-duplicado.cr
+	- exemplo-erro-configuracao-errada.cr
+	- exemplo-erro-formato-data.cr
+	- exemplo-erro-multiplos-separadores.cr
+	- exemplo-erro-periodo.cr
 
 	Saida:
 	- exemplo-erro-atividade-duplicada.txt
 	- exemplo-erro-cronograma-duplicado.txt
+	- exemplo-erro-configuracao-errada.txt
+	- exemplo-erro-formato-data.txt
+	- exemplo-erro-multiplos-separadores.txt
+	- exemplo-erro-periodo.txt
 
 Exemplos com Erros Sintáticos:
 	Entrada:	

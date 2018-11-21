@@ -80,7 +80,7 @@ public class AnalisadorSemantico extends ChronologicalBaseVisitor<Void> {
             dataInicial = configuracaoCurCronograma.dataFormater.parse(ctx.dataInicio.getText());
             dataFinal = configuracaoCurCronograma.dataFormater.parse(ctx.dataFinal.getText());
         } catch (ParseException e) {
-            erros.adicionarErro("Linha " + ctx.getStart().getLine() + ": Data  nao esta conforme o padrao "
+            erros.adicionarErro("Linha " + ctx.getStart().getLine() + ": Data nao esta conforme o padrao "
                     + configuracaoCurCronograma.formatoData);
             return super.visitPeriodo(ctx);
         }

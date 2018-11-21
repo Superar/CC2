@@ -1,0 +1,4 @@
+Linha 25: Periodo de dependencia nao especificado
+Linha 34: Periodo Dependencia.125 especificado nao existe.
+Linha 44: Periodo dependenciaAconteceAntes.1 ocorre antes da dependencia Dependencia.2
+Fim da compilacao

@@ -1,0 +1,2 @@
+Linha 18: Atividade dependenciaFantasma nao declarada
+Fim da compilacao

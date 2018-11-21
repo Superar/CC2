@@ -24,6 +24,8 @@ Exemplos com Erros Semânticos:
 	- exemplo-erro-formato-data.cr
 	- exemplo-erro-multiplos-separadores.cr
 	- exemplo-erro-periodo.cr
+	- exemplo-erro-declaracao-dependencia.cr
+	- exemplo-erro-periodos-dependencia.ct
 
 	Saida:
 	- exemplo-erro-atividade-duplicada.txt
@@ -32,6 +34,8 @@ Exemplos com Erros Semânticos:
 	- exemplo-erro-formato-data.txt
 	- exemplo-erro-multiplos-separadores.txt
 	- exemplo-erro-periodo.txt
+	- exemplo-erro-declaracao-dependencia.txt
+	- exemplo-erro-periodos-dependencia.txt
 
 Exemplos com Erros Sintáticos:
 	Entrada:	

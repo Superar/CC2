@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.io.*;
+import java.nio.file.NoSuchFileException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -76,7 +77,7 @@ public final class Compilador {
                 walker.walk(geradorDeCodigo, arvore);
                 System.out.println(geradorDeCodigo.getCodigo());
             } catch (IOException ex) {
-                Logger.getLogger(Compilador.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Arquivo inexistente: " + ex.getLocalizedMessage());
             } catch (ParseCancellationException ex) { // Erro de compilacao lexico ou sintatico
                 System.out.println(ex.getMessage());
                 System.out.println("Fim da compilacao");

@@ -58,7 +58,7 @@ cor_rgb:
 
 cor_hex: NUMERO_HEX;
 
-altura_barra: 'Altura da barra: ' NUMERO_REAL;
+altura_barra: 'Altura da barra: ' (NUMERO_REAL | NUMERO_INTEIRO);
 
 // A dependencia com apenas o identificador pode ser utilizada apenas no caso de a atividade de
 // referencia possuir uma unica barra, caso contrario, especifica-se a barra com um numero separado
@@ -95,7 +95,7 @@ DATA:
 // Numero hexadecimal deve comecar com 0x para diferenciar de identificadores ou outros numeros
 NUMERO_HEX: '0x' (DIGITO_HEX)+;
 NUMERO_INTEIRO: (DIGITO)+;
-NUMERO_REAL: (DIGITO)+ ('.' (DIGITO)+)?;
+NUMERO_REAL: (DIGITO)+ '.' (DIGITO)+;
 
 // Configuracao de datas
 fragment DIA_CONFIG: 'dd';

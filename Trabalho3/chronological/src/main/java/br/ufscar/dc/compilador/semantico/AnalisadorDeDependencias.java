@@ -44,24 +44,27 @@ public class AnalisadorDeDependencias extends ChronologicalBaseVisitor<Void> {
                             "Linha " + ctx.getStart().getLine() + ": Periodo de dependencia nao especificado");
                 }
             } else {
-                // Atividade deve ter o periodo especificado
+                // Parsing do numero do periodo
                 numPeriodo = Integer.parseInt(ctx.NUMERO_INTEIRO().getText());
-                if (tabelas.getPeriodosDeAtividade(cronogramaAtual, nomeAtividadeDep).size() < numPeriodo) {
-                    erros.adicionarErro("Linha " + ctx.getStart().getLine() + ": Periodo " + ctx.getText()
-                            + " especificado nao existe.");
+            }
+
+            try {
+                // Verifica as datas
+                Periodo perAtividadeAtual, perAtividadeDep;
+                // Sempre compara com o primeiro periodo da atividade atual
+                perAtividadeAtual = tabelas.getPeriodosDeAtividade(cronogramaAtual, atividadeAtual).get(0);
+                perAtividadeDep = tabelas.getPeriodosDeAtividade(cronogramaAtual, nomeAtividadeDep).get(numPeriodo - 1);
+
+                if (perAtividadeAtual.dataInicial.before(perAtividadeDep.dataFinal)) {
+                    erros.adicionarErro("Linha " + ctx.getStart().getLine() + ": Periodo " + atividadeAtual
+                            + ".1 ocorre antes da dependencia " + ctx.getText());
                 }
+            } catch (IndexOutOfBoundsException ex) {
+                // Atividade deve ter o periodo especificado
+                erros.adicionarErro("Linha " + ctx.getStart().getLine() + ": Periodo " + ctx.getText()
+                        + " especificado nao existe.");
             }
 
-            // Verifica as datas
-            Periodo perAtividadeAtual, perAtividadeDep;
-            // Sempre compara com o primeiro periodo da atividade atual
-            perAtividadeAtual = tabelas.getPeriodosDeAtividade(cronogramaAtual, atividadeAtual).get(0);
-            perAtividadeDep = tabelas.getPeriodosDeAtividade(cronogramaAtual, nomeAtividadeDep).get(numPeriodo - 1);
-
-            if (perAtividadeAtual.dataInicial.before(perAtividadeDep.dataFinal)) {
-                erros.adicionarErro("Linha " + ctx.getStart().getLine() + ": Periodo " + atividadeAtual
-                        + ".1 ocorre antes da dependencia " + ctx.getText());
-            }
         }
         return super.visitDependencia(ctx);
     }
